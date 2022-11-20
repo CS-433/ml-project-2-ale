@@ -1,10 +1,13 @@
-Machine Learning Project: Higgs Boson?
+Machine Learning Project: Brain Fingerprint from the brain activity
 ==========
+In partnership with the Medical Image Processing Lab (MIP:Lab)
+
+Supervisors: Hamid Behjat and Ekansh Sareen
+
 
 Overview
 ========
-This machine learning project helps to predict whether a given signature, resulting from the crash 
-of particules into each other, is a Higgs boson or not. <br/>
+This machine learning project helps to predict the identity of a individu given its brain activity. To do so, we learn a graph from MEG (Magnetoencephalography) data to extract features use in our classifier. We started with a basic multi class logistic classifier before trying more complex ones. Moreover, we tuned our learning graph method to obtain the best features and so the best accuracy. <br/>
 <br/>
 
 
@@ -18,10 +21,9 @@ Directory layout
     ├── model_selection.py
     ├── plots
     ├── plots.py
-    ├── project_1.ipynb
     ├── README.md
     ├── run.py
-    └── Higgs boson?.pdf
+    └── Project2.pdf
 
 
 
@@ -54,7 +56,6 @@ implementations.py              |Data preprocessing function as well as our mode
 model_selection.py              |File containing the resulting MSE computed by different hyperparameters.
 plots.py                        |Functions used to plot some of our results
 run.py                          |File that runs a our best model and creates the submission file for AICrowd
-project_1.ipynb	                |Initial data visualisation, tuning of hyper-parameters and model comparison to find the best prediction model
 
 Authors
 =======
