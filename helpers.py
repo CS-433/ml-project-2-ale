@@ -163,3 +163,91 @@ def readfile(filename, size_of_matrix=148):
     upper_triangular_matrix = x[indices_upper_triangular]
 
     return upper_triangular_matrix
+
+
+'''
+def load_csv_data_updated(data_path):
+    path = os.path.join(data_path, '**/*.mat')
+    files = glob.glob(path, recursive=True)
+
+    final_data_set_train_wl2 = np.empty((75, 10878, 20))
+    final_data_set_test_wl2 = np.empty((75, 10878, 20))
+    final_data_set_train_wlog = np.empty((75, 10878, 20))
+    final_data_set_test_wlog = np.empty((75, 10878, 20))
+    # TODO: somewhere we will need to add the labels !!!!
+
+    for file in files:
+        # TODO:  we will have to put all of this in a function that we can call for both cases of the if
+
+        data = scipy.io.loadmat(file, appendmat=0)
+        results = data['RESULTS']
+        session = results["session"]
+        alphas = results["alphas"]
+        betas = results["betas"]
+        id = results["ID"]
+        wl2 = results["W_l2"]
+        wlog = results["W_log"]
+        wl2 = wl2[0][0]
+        wlog = wlog[0][0]
+        alphas = alphas[0][0].T
+        betas = betas[0][0].T
+
+        if session == "3-Restin_rmegpreproc_bandpass-envelop":
+            # train for wl2
+            # data_sets_wl2 = []
+            for i in range(alphas.shape[0]):
+                data_set_wl2 = np.empty((25, 10878))
+                for j in range(wl2.shape[3]):
+                    matrix = wl2[:, :, i, j]
+                    column_vector = read_matrix(matrix)
+                    np.vstack((data_set_wl2, column_vector))
+                    print(data_set_wl2.shape)
+                np.vstack((final_data_set_train_wl2[:, :, i], data_set_wl2))
+
+            # stacks the data set in 3rd dimension
+            # data_sets_wl2 = np.dstack(data_sets_wl2)
+
+            # final_data_set_train_wl2.append(data_sets_wl2)
+
+            # train for wlog
+            data_sets_wlog = []
+            for a in range(betas.shape[0]):
+                data_set_wlog = []
+                for b in range(wlog.shape[3]):
+                    matrix = wlog[:, :, a, b]
+                    column_vector = read_matrix(matrix)
+                    data_set_wlog.append(column_vector)
+                data_sets_wlog.append(data_set_wlog)
+
+            data_sets_wlog = np.dstack(data_sets_wlog)  # stacks the data set in 3rd dimension
+            final_data_set_train_wlog.append(data_sets_wlog)
+
+        elif session == "4-Restin_rmegpreproc_bandpass-envelop":
+            # test for wl2
+            data_sets_wl2 = []
+            for i in range(alphas.shape[0]):
+                data_set_wl2 = []
+                for j in range(wl2.shape[3]):
+                    matrix = wl2[:, :, i, j]
+                    column_vector = read_matrix(matrix)
+                    data_set_wl2.append(column_vector)
+                data_sets_wl2.append(data_set_wl2)
+
+            data_sets_wl2 = np.dstack(data_sets_wl2)  # stacks the data set in 3rd dimension
+            final_data_set_test_wl2.append(data_sets_wl2)
+
+            # train for wlog
+            data_sets_wlog = []
+            for a in range(betas.shape[0]):
+                data_set_wlog = []
+                for b in range(wlog.shape[3]):
+                    matrix = wlog[:, :, a, b]
+                    column_vector = read_matrix(matrix)
+                    data_set_wlog.append(column_vector)
+                data_sets_wlog.append(data_set_wlog)
+
+            data_sets_wlog = np.dstack(data_sets_wlog)  # stacks the data set in 3rd dimension
+            final_data_set_test_wlog.append(data_sets_wlog)
+
+    return final_data_set_train_wl2, final_data_set_train_wlog, final_data_set_test_wlog, final_data_set_test_wl2
+'''
