@@ -33,16 +33,32 @@ def load_csv_data(data_path):
     return final_matrix, y_labels
 
 
-def load_csv_data_updated(data_path):
+def load_csv_data_updated(data_path, save_file=True):
     path = os.path.join(data_path, '**/*.mat')
     files = glob.glob(path, recursive=True)
 
-    final_data_set_train_wl2 = []
-    final_data_set_test_wl2 = []
-    final_data_set_train_wlog = []
-    final_data_set_test_wlog = []
+    # declare all the final data sets (1 per band per regularization)
+    final_data_set_train_wl2_alpha = []
+    final_data_set_train_wl2_beta = []
+    final_data_set_train_wl2_delta = []
+    final_data_set_train_wl2_gamma = []
+    final_data_set_train_wl2_theta = []
+    final_data_set_test_wl2_alpha = []
+    final_data_set_test_wl2_beta = []
+    final_data_set_test_wl2_delta = []
+    final_data_set_test_wl2_gamma = []
+    final_data_set_test_wl2_theta = []
+    final_data_set_train_wlog_alpha = []
+    final_data_set_train_wlog_beta = []
+    final_data_set_train_wlog_delta = []
+    final_data_set_train_wlog_gamma = []
+    final_data_set_train_wlog_theta = []
+    final_data_set_test_wlog_alpha = []
+    final_data_set_test_wlog_beta = []
+    final_data_set_test_wlog_delta = []
+    final_data_set_test_wlog_gamma = []
+    final_data_set_test_wlog_theta = []
 
-    # TODO: somewhere we will need to add the labels !!!!
     number_of_files = 0
     for file in files:
 
@@ -67,14 +83,13 @@ def load_csv_data_updated(data_path):
         wlog = wlog[0][0]
         alphas = alphas[0][0].T
         betas = betas[0][0].T
-        # print(size_wl2)
-        # print(size_wlog)
+        frequency_band = results["band"]
+        frequency_band = np.squeeze(frequency_band[0][0])
 
         if session == "3-Restin_rmegpreproc_bandpass-envelop":
             # train for wl2
             for i in range(alphas.shape[0]):
                 data_set_wl2 = np.array([])
-                # range(wl2.shape[3]-1) --> this doesn't work, j = 23 or 22 sometimes, idk why...
                 for j in range(size_wl2[3]-1):
                     matrix = wl2[:, :, i, j]
                     column_vector = read_matrix(matrix)
@@ -83,11 +98,31 @@ def load_csv_data_updated(data_path):
                         data_set_wl2 = column_vector
                     else:
                         data_set_wl2 = np.vstack((data_set_wl2, column_vector))
-
-                if number_of_files == 0:
-                    final_data_set_train_wl2.append(data_set_wl2)
-                else:
-                    final_data_set_train_wl2[i] = np.vstack((final_data_set_train_wl2[i], data_set_wl2))
+                if frequency_band == "alpha":
+                    if len(final_data_set_train_wl2_alpha) < alphas.shape[0]:
+                        final_data_set_train_wl2_alpha.append(data_set_wl2)
+                    else:
+                        final_data_set_train_wl2_alpha[i] = np.vstack((final_data_set_train_wl2_alpha[i], data_set_wl2))
+                elif frequency_band == "beta":
+                    if len(final_data_set_train_wl2_beta) < alphas.shape[0]:
+                        final_data_set_train_wl2_beta.append(data_set_wl2)
+                    else:
+                        final_data_set_train_wl2_beta[i] = np.vstack((final_data_set_train_wl2_beta[i], data_set_wl2))
+                elif frequency_band == "delta":
+                    if len(final_data_set_train_wl2_delta) < alphas.shape[0]:
+                        final_data_set_train_wl2_delta.append(data_set_wl2)
+                    else:
+                        final_data_set_train_wl2_delta[i] = np.vstack((final_data_set_train_wl2_delta[i], data_set_wl2))
+                elif frequency_band == "gamma":
+                    if len(final_data_set_train_wl2_gamma) < alphas.shape[0]:
+                        final_data_set_train_wl2_gamma.append(data_set_wl2)
+                    else:
+                        final_data_set_train_wl2_gamma[i] = np.vstack((final_data_set_train_wl2_gamma[i], data_set_wl2))
+                elif frequency_band == "theta":
+                    if len(final_data_set_train_wl2_theta) < alphas.shape[0]:
+                        final_data_set_train_wl2_theta.append(data_set_wl2)
+                    else:
+                        final_data_set_train_wl2_theta[i] = np.vstack((final_data_set_train_wl2_theta[i], data_set_wl2))
 
             # train for wlog
             for a in range(betas.shape[0]):
@@ -102,17 +137,36 @@ def load_csv_data_updated(data_path):
                     else:
                         data_set_wlog = np.vstack((data_set_wlog, column_vector))
 
-                if number_of_files == 0:
-                    final_data_set_train_wlog.append(data_set_wlog)
-                else:
-                    final_data_set_train_wlog[a] = np.vstack((final_data_set_train_wlog[a], data_set_wlog))
+                if frequency_band == "alpha":
+                    if len(final_data_set_train_wlog_alpha) < betas.shape[0]:
+                        final_data_set_train_wlog_alpha.append(data_set_wlog)
+                    else:
+                        final_data_set_train_wlog_alpha[a] = np.vstack((final_data_set_train_wlog_alpha[a], data_set_wlog))
+                elif frequency_band == "beta":
+                    if len(final_data_set_train_wlog_beta) < betas.shape[0]:
+                        final_data_set_train_wlog_beta.append(data_set_wlog)
+                    else:
+                        final_data_set_train_wlog_beta[a] = np.vstack((final_data_set_train_wlog_beta[a], data_set_wlog))
+                elif frequency_band == "delta":
+                    if len(final_data_set_train_wlog_delta) < betas.shape[0]:
+                        final_data_set_train_wlog_delta.append(data_set_wlog)
+                    else:
+                        final_data_set_train_wlog_delta[a] = np.vstack((final_data_set_train_wlog_delta[a], data_set_wlog))
+                elif frequency_band == "gamma":
+                    if len(final_data_set_train_wlog_gamma) < betas.shape[0]:
+                        final_data_set_train_wlog_gamma.append(data_set_wlog)
+                    else:
+                        final_data_set_train_wlog_gamma[a] = np.vstack((final_data_set_train_wlog_gamma[a], data_set_wlog))
+                elif frequency_band == "theta":
+                    if len(final_data_set_train_wlog_theta) < betas.shape[0]:
+                        final_data_set_train_wlog_theta.append(data_set_wlog)
+                    else:
+                        final_data_set_train_wlog_theta[a] = np.vstack((final_data_set_train_wlog_theta[a], data_set_wlog))
 
         elif session == "4-Restin_rmegpreproc_bandpass-envelop":
             # test for wl2
             for i in range(alphas.shape[0]):
                 data_set_wl2 = np.array([])
-                # range(wl2.shape[3] - 1) -> doesn't work idk why
-                # range(24) -> index 23 is out of bounds for axis 3 with size 23???
                 for j in range(size_wl2[3]-1):
                     matrix = wl2[:, :, i, j]
                     column_vector = read_matrix(matrix)
@@ -122,10 +176,31 @@ def load_csv_data_updated(data_path):
                     else:
                         data_set_wl2 = np.vstack((data_set_wl2, column_vector))
 
-                if number_of_files == 5:
-                    final_data_set_test_wl2.append(data_set_wl2)
-                else:
-                    final_data_set_test_wl2[i] = np.vstack((final_data_set_test_wl2[i], data_set_wl2))
+                if frequency_band == "alpha":
+                    if len(final_data_set_test_wl2_alpha) < alphas.shape[0]:
+                        final_data_set_test_wl2_alpha.append(data_set_wl2)
+                    else:
+                        final_data_set_test_wl2_alpha[i] = np.vstack((final_data_set_test_wl2_alpha[i], data_set_wl2))
+                elif frequency_band == "beta":
+                    if len(final_data_set_test_wl2_beta) < alphas.shape[0]:
+                        final_data_set_test_wl2_beta.append(data_set_wl2)
+                    else:
+                        final_data_set_test_wl2_beta[i] = np.vstack((final_data_set_test_wl2_beta[i], data_set_wl2))
+                elif frequency_band == "delta":
+                    if len(final_data_set_test_wl2_delta) < alphas.shape[0]:
+                        final_data_set_test_wl2_delta.append(data_set_wl2)
+                    else:
+                        final_data_set_test_wl2_delta[i] = np.vstack((final_data_set_test_wl2_delta[i], data_set_wl2))
+                elif frequency_band == "gamma":
+                    if len(final_data_set_test_wl2_gamma) < alphas.shape[0]:
+                        final_data_set_test_wl2_gamma.append(data_set_wl2)
+                    else:
+                        final_data_set_test_wl2_gamma[i] = np.vstack((final_data_set_test_wl2_gamma[i], data_set_wl2))
+                elif frequency_band == "theta":
+                    if len(final_data_set_test_wl2_theta) < alphas.shape[0]:
+                        final_data_set_test_wl2_theta.append(data_set_wl2)
+                    else:
+                        final_data_set_test_wl2_theta[i] = np.vstack((final_data_set_test_wl2_theta[i], data_set_wl2))
 
             # test for wlog
             for a in range(betas.shape[0]):
@@ -139,22 +214,74 @@ def load_csv_data_updated(data_path):
                     else:
                         data_set_wlog = np.vstack((data_set_wlog, column_vector))
 
-                if number_of_files == 5:
-                    final_data_set_test_wlog.append(data_set_wlog)
-                else:
-                    final_data_set_test_wlog[a] = np.vstack((final_data_set_test_wlog[a], data_set_wlog))
+                if frequency_band == "alpha":
+                    if len(final_data_set_test_wlog_alpha) < betas.shape[0]:
+                        final_data_set_test_wlog_alpha.append(data_set_wlog)
+                    else:
+                        final_data_set_test_wlog_alpha[a] = np.vstack(
+                            (final_data_set_test_wlog_alpha[a], data_set_wlog))
+                elif frequency_band == "beta":
+                    if len(final_data_set_test_wlog_beta) < betas.shape[0]:
+                        final_data_set_test_wlog_beta.append(data_set_wlog)
+                    else:
+                        final_data_set_test_wlog_beta[a] = np.vstack(
+                            (final_data_set_test_wlog_beta[a], data_set_wlog))
+                elif frequency_band == "delta":
+                    if len(final_data_set_test_wlog_delta) < betas.shape[0]:
+                        final_data_set_test_wlog_delta.append(data_set_wlog)
+                    else:
+                        final_data_set_test_wlog_delta[a] = np.vstack(
+                            (final_data_set_test_wlog_delta[a], data_set_wlog))
+                elif frequency_band == "gamma":
+                    if len(final_data_set_test_wlog_gamma) < betas.shape[0]:
+                        final_data_set_test_wlog_gamma.append(data_set_wlog)
+                    else:
+                        final_data_set_test_wlog_gamma[a] = np.vstack(
+                            (final_data_set_test_wlog_gamma[a], data_set_wlog))
+                elif frequency_band == "theta":
+                    if len(final_data_set_test_wlog_theta) < betas.shape[0]:
+                        final_data_set_test_wlog_theta.append(data_set_wlog)
+                    else:
+                        final_data_set_test_wlog_theta[a] = np.vstack(
+                            (final_data_set_test_wlog_theta[a], data_set_wlog))
 
+        print("file " + str(number_of_files) + " loaded")
         number_of_files += 1
+    # frequency_bands = ["alpha", "beta", "delta", "gamma", "theta"]
+    if save_file:
+        for alpha in range(alphas.shape[0]):
+            np.savetxt(r'data_sets/train_wl2_' + 'alpha_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_train_wl2_alpha[alpha], delimiter=' ')
+            np.savetxt(r'data_sets/train_wl2_' + 'beta_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_train_wl2_beta[alpha], delimiter=' ')
+            np.savetxt(r'data_sets/train_wl2_' + 'delta_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_train_wl2_delta[alpha], delimiter=' ')
+            np.savetxt(r'data_sets/train_wl2_' + 'gamma_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_train_wl2_gamma[alpha],delimiter=' ')
+            np.savetxt(r'data_sets/train_wl2_' + 'theta_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_train_wl2_theta[alpha], delimiter=' ')
+            np.savetxt(r'data_sets/test_wl2_' + 'alpha_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_test_wl2_alpha[alpha], delimiter=' ')
+            np.savetxt(r'data_sets/test_wl2_' + 'beta_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_test_wl2_beta[alpha], delimiter=' ')
+            np.savetxt(r'data_sets/test_wl2_' + 'delta_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_test_wl2_delta[alpha], delimiter=' ')
+            np.savetxt(r'data_sets/test_wl2_' + 'gamma_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_test_wl2_gamma[alpha],delimiter=' ')
+            np.savetxt(r'data_sets/test_wl2_' + 'theta_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_test_wl2_theta[alpha], delimiter=' ')
+            print("all files for alpha = " + str(np.squeeze(alphas[alpha])) + " saved")
 
-    for alpha in range(20):
-        np.savetxt(r'data_sets/train_wl2_' + str(alpha), final_data_set_train_wl2[alpha], delimiter=' ')
-        np.savetxt(r'data_sets/test_wl2_' + str(alpha), final_data_set_test_wl2[alpha], delimiter=' ')
+        for beta in range(betas.shape[0]):
+            np.savetxt(r'data_sets/train_wlog_' + 'alpha_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_train_wlog_alpha[beta], delimiter=' ')
+            np.savetxt(r'data_sets/train_wlog_' + 'beta_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_train_wlog_beta[beta], delimiter=' ')
+            np.savetxt(r'data_sets/train_wlog_' + 'delta_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_train_wlog_delta[beta], delimiter=' ')
+            np.savetxt(r'data_sets/train_wlog_' + 'gamma_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_train_wlog_gamma[beta],delimiter=' ')
+            np.savetxt(r'data_sets/train_wlog_' + 'theta_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_train_wlog_theta[beta], delimiter=' ')
+            np.savetxt(r'data_sets/test_wlog_' + 'alpha_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_test_wlog_alpha[beta], delimiter=' ')
+            np.savetxt(r'data_sets/test_wlog_' + 'beta_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_test_wlog_beta[beta], delimiter=' ')
+            np.savetxt(r'data_sets/test_wlog_' + 'delta_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_test_wlog_delta[beta], delimiter=' ')
+            np.savetxt(r'data_sets/test_wlog_' + 'gamma_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_test_wlog_gamma[beta],delimiter=' ')
+            np.savetxt(r'data_sets/test_wlog_' + 'theta_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_test_wlog_theta[beta], delimiter=' ')
+            print("all files for beta = " + str(np.squeeze(betas[beta])) + " saved")
 
-    for beta in range(20):
-        np.savetxt(r'data_sets/train_wlog_' + str(beta), final_data_set_train_wlog[beta], delimiter=' ')
-        np.savetxt(r'data_sets/test_wlog_' + str(beta), final_data_set_test_wlog[beta], delimiter=' ')
-
-    return final_data_set_train_wl2, final_data_set_train_wlog, final_data_set_test_wlog, final_data_set_test_wl2
+    return final_data_set_train_wl2_alpha, final_data_set_train_wl2_beta, final_data_set_train_wl2_delta, \
+           final_data_set_train_wl2_gamma, final_data_set_train_wl2_theta, final_data_set_test_wl2_alpha, \
+           final_data_set_test_wl2_beta, final_data_set_test_wl2_delta, final_data_set_test_wl2_gamma, \
+           final_data_set_test_wl2_theta, final_data_set_train_wlog_alpha, final_data_set_train_wlog_beta, \
+           final_data_set_train_wlog_delta, final_data_set_train_wlog_gamma, final_data_set_train_wlog_theta,\
+           final_data_set_test_wlog_alpha, final_data_set_test_wlog_beta, final_data_set_test_wlog_delta, \
+           final_data_set_test_wlog_gamma, final_data_set_test_wlog_theta
 
 
 def read_matrix(matrix, size_of_matrix=148):
