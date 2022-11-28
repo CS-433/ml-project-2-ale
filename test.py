@@ -80,3 +80,5 @@ print(final_data_set_test_wlog[0].shape)
 # we have a list of size 20. Each element i of the list should be a matrix 360 (24*3*5) x 10878
 
 # print(final_data_set_train_wl2)
+
+

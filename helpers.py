@@ -56,6 +56,9 @@ def load_csv_data_updated(data_path):
         id = results["ID"]
         wl2 = results["W_l2"]
         wlog = results["W_log"]
+        size_wl2 = results["W_l2_size"]
+        size_wl2 = size_wl2[0][0]
+        size_wl2 = np.squeeze(size_wl2)
         wl2 = wl2[0][0]
         wlog = wlog[0][0]
         alphas = alphas[0][0].T
@@ -65,13 +68,12 @@ def load_csv_data_updated(data_path):
             # train for wl2
             for i in range(alphas.shape[0]):
                 data_set_wl2 = np.array([])
-
                 # range(wl2.shape[3]-1) --> this doesn't work, j = 23 or 22 sometimes, idk why...
-                for j in range(24):
+                for j in range(size_wl2[3]-1):
                     matrix = wl2[:, :, i, j]
                     column_vector = read_matrix(matrix)
                     if data_set_wl2.size == 0:
-                       data_set_wl2 = column_vector
+                        data_set_wl2 = column_vector
                     else:
                         data_set_wl2 = np.vstack((data_set_wl2, column_vector))
 
@@ -84,7 +86,7 @@ def load_csv_data_updated(data_path):
             for a in range(betas.shape[0]):
                 data_set_wlog = np.array([])
                 # range(wlog.shape[3]-1)
-                for b in range(24):
+                for b in range(size_wl2[3]-1):
                     matrix = wlog[:, :, a, b]
                     column_vector = read_matrix(matrix)
                     if data_set_wlog.size == 0:
@@ -103,7 +105,7 @@ def load_csv_data_updated(data_path):
                 data_set_wl2 = np.array([])
                 # range(wl2.shape[3] - 1) -> doesn't work idk why
                 # range(24) -> index 23 is out of bounds for axis 3 with size 23???
-                for j in range(23):
+                for j in range(size_wl2[3]-1):
                     matrix = wl2[:, :, i, j]
                     column_vector = read_matrix(matrix)
                     if data_set_wl2.size == 0:
@@ -111,7 +113,7 @@ def load_csv_data_updated(data_path):
                     else:
                         data_set_wl2 = np.vstack((data_set_wl2, column_vector))
 
-                if number_of_files == 5:
+                if number_of_files == 1:
                     final_data_set_test_wl2.append(data_set_wl2)
                 else:
                     final_data_set_test_wl2[i] = np.vstack((final_data_set_test_wl2[i], data_set_wl2))
@@ -119,7 +121,7 @@ def load_csv_data_updated(data_path):
             # test for wlog
             for a in range(betas.shape[0]):
                 data_set_wlog = np.array([])
-                for b in range(23):
+                for b in range(size_wl2[3]-1):
                     matrix = wlog[:, :, a, b]
                     column_vector = read_matrix(matrix)
                     if data_set_wlog.size == 0:
@@ -127,7 +129,7 @@ def load_csv_data_updated(data_path):
                     else:
                         data_set_wlog = np.vstack((data_set_wlog, column_vector))
 
-                if number_of_files == 5:
+                if number_of_files == 1:
                     final_data_set_test_wlog.append(data_set_wlog)
                 else:
                     final_data_set_test_wlog[a] = np.vstack((final_data_set_test_wlog[a], data_set_wlog))
