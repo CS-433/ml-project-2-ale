@@ -27,7 +27,8 @@ def load_csv_data(data_path):
 
     final_matrix = np.array(final_matrix)
     # change to use the IDs as labels
-    y_labels = np.arange(1, 49, 1)
+    # y_labels = np.arange(1, 49, 1)
+    y_labels = np.arange(1, 4, 1)
 
     return final_matrix, y_labels
 
@@ -36,14 +37,15 @@ def load_csv_data_updated(data_path):
     path = os.path.join(data_path, '**/*.mat')
     files = glob.glob(path, recursive=True)
 
-    final_data_set_train_wl2 = np.array([])
-    final_data_set_test_wl2 = np.array([])
-    final_data_set_train_wlog = np.array([])
-    final_data_set_test_wlog = np.array([])
-    # TODO: somewhere we will need to add the labels !!!!
+    final_data_set_train_wl2 = []
+    final_data_set_test_wl2 = []
+    final_data_set_train_wlog = []
+    final_data_set_test_wlog = []
 
+    # TODO: somewhere we will need to add the labels !!!!
+    number_of_files = 0
     for file in files:
-        number_of_files = 0
+
         # TODO:  we will have to put all of this in a function that we can call for both cases of the if
 
         data = scipy.io.loadmat(file, appendmat=0)
@@ -63,23 +65,26 @@ def load_csv_data_updated(data_path):
             # train for wl2
             for i in range(alphas.shape[0]):
                 data_set_wl2 = np.array([])
-                for j in range(wl2.shape[3]-1):
+
+                # range(wl2.shape[3]-1) --> this doesn't work, j = 23 or 22 sometimes, idk why...
+                for j in range(24):
                     matrix = wl2[:, :, i, j]
                     column_vector = read_matrix(matrix)
                     if data_set_wl2.size == 0:
-                        data_set_wl2 = column_vector
+                       data_set_wl2 = column_vector
                     else:
                         data_set_wl2 = np.vstack((data_set_wl2, column_vector))
 
-                if final_data_set_train_wl2.size == 0:
-                    final_data_set_train_wl2 = data_set_wl2
+                if number_of_files == 0:
+                    final_data_set_train_wl2.append(data_set_wl2)
                 else:
-                    final_data_set_train_wl2[:, :, i] = np.vstack((final_data_set_train_wl2[:, :, i], data_set_wl2))
+                    final_data_set_train_wl2[i] = np.vstack((final_data_set_train_wl2[i], data_set_wl2))
 
-            # train for wl2
-            for a in range(alphas.shape[0]):
+            # train for wlog
+            for a in range(betas.shape[0]):
                 data_set_wlog = np.array([])
-                for b in range(wlog.shape[3] - 1):
+                # range(wlog.shape[3]-1)
+                for b in range(24):
                     matrix = wlog[:, :, a, b]
                     column_vector = read_matrix(matrix)
                     if data_set_wlog.size == 0:
@@ -87,18 +92,18 @@ def load_csv_data_updated(data_path):
                     else:
                         data_set_wlog = np.vstack((data_set_wlog, column_vector))
 
-                if final_data_set_train_wlog.size == 0:
-                    final_data_set_train_wlog = data_set_wlog
-                    final_data_set_train_wlog = np.expand_dims(final_data_set_train_wlog, 2)
+                if number_of_files == 0:
+                    final_data_set_train_wlog.append(data_set_wlog)
                 else:
-                    final_data_set_train_wlog[:, :, a] = np.vstack(
-                        (final_data_set_train_wlog[:, :, a], data_set_wlog))
+                    final_data_set_train_wlog[a] = np.vstack((final_data_set_train_wlog[a], data_set_wlog))
 
         elif session == "4-Restin_rmegpreproc_bandpass-envelop":
-            # train for wl2
+            # test for wl2
             for i in range(alphas.shape[0]):
                 data_set_wl2 = np.array([])
-                for j in range(wl2.shape[3] - 1):
+                # range(wl2.shape[3] - 1) -> doesn't work idk why
+                # range(24) -> index 23 is out of bounds for axis 3 with size 23???
+                for j in range(23):
                     matrix = wl2[:, :, i, j]
                     column_vector = read_matrix(matrix)
                     if data_set_wl2.size == 0:
@@ -106,16 +111,15 @@ def load_csv_data_updated(data_path):
                     else:
                         data_set_wl2 = np.vstack((data_set_wl2, column_vector))
 
-                if final_data_set_test_wl2.size == 0:
-                    final_data_set_test_wl2 = data_set_wl2
-                    final_data_set_test_wl2 = np.expand_dims(final_data_set_test_wl2, 2)
+                if number_of_files == 5:
+                    final_data_set_test_wl2.append(data_set_wl2)
                 else:
-                    final_data_set_test_wl2[:, :, i] = np.vstack((final_data_set_test_wl2[:, :, i], data_set_wl2))
+                    final_data_set_test_wl2[i] = np.vstack((final_data_set_test_wl2[i], data_set_wl2))
 
-            # train for wl2
-            for a in range(alphas.shape[0]):
+            # test for wlog
+            for a in range(betas.shape[0]):
                 data_set_wlog = np.array([])
-                for b in range(wlog.shape[3] - 1):
+                for b in range(23):
                     matrix = wlog[:, :, a, b]
                     column_vector = read_matrix(matrix)
                     if data_set_wlog.size == 0:
@@ -123,25 +127,25 @@ def load_csv_data_updated(data_path):
                     else:
                         data_set_wlog = np.vstack((data_set_wlog, column_vector))
 
-                if final_data_set_test_wlog.size == 0:
-                    final_data_set_test_wlog = data_set_wlog
-                    final_data_set_test_wlog = np.expand_dims(final_data_set_test_wlog, 2)
+                if number_of_files == 5:
+                    final_data_set_test_wlog.append(data_set_wlog)
                 else:
-                    final_data_set_test_wlog[:, :, a] = np.vstack(
-                        (final_data_set_test_wlog[:, :, a], data_set_wlog))
+                    final_data_set_test_wlog[a] = np.vstack((final_data_set_test_wlog[a], data_set_wlog))
 
-        number_of_files +=1
+        number_of_files += 1
     '''
     for alpha in range(20):
-        np.savetxt('train_wl2_' + str(alpha), final_data_set_train_wl2[:, :, alpha], delimeter=' ')
-        np.savetxt('test_wl2_' + str(alpha), final_data_set_test_wl2[:, :, alpha], delimeter=' ')
+        np.savetxt('train_wl2_' + str(alpha), final_data_set_train_wl2[alpha], delimeter=' ')
+        np.savetxt('test_wl2_' + str(alpha), final_data_set_test_wl2[alpha], delimeter=' ')
         
     for beta in range(20):
-        np.savetxt('train_wlog_' + str(beta), final_data_set_train_wlog[:, :, beta], delimeter=' ')
-        np.savetxt('test_wlog_' + str(beta), final_data_set_test_wlog[:, :, beta], delimeter=' ')
+        np.savetxt('train_wlog_' + str(beta), final_data_set_train_wlog[beta], delimeter=' ')
+        np.savetxt('test_wlog_' + str(beta), final_data_set_test_wlog[beta], delimeter=' ')
         
     '''
     return final_data_set_train_wl2, final_data_set_train_wlog, final_data_set_test_wlog, final_data_set_test_wl2
+
+
 def read_matrix(matrix, size_of_matrix=148):
     # this function works!
     x = np.reshape(matrix, (size_of_matrix, size_of_matrix))

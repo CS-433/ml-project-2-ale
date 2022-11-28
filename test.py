@@ -69,9 +69,14 @@ print(wlog.shape[3])
 
 # Test of new load data
 final_data_set_train_wl2, final_data_set_train_wlog, final_data_set_test_wlog, final_data_set_test_wl2 = load_csv_data_updated('data')
-print("wl2 train:", final_data_set_train_wl2.shape)
-print("wlog train:", final_data_set_train_wlog.shape)
-print("wl2 test:", final_data_set_test_wl2.shape)
-print("wlog test:", final_data_set_train_wlog.shape)
+print("wl2 train:", len(final_data_set_train_wl2))
+print(final_data_set_train_wl2[0].shape)
+print("wlog train:", len(final_data_set_train_wlog))
+print(final_data_set_train_wlog[0].shape)
+print("wl2 test:", len(final_data_set_test_wl2))
+print(final_data_set_test_wl2[0].shape)
+print("wlog test:", len(final_data_set_test_wlog))
+print(final_data_set_test_wlog[0].shape)
+# we have a list of size 20. Each element i of the list should be a matrix 360 (24*3*5) x 10878
 
-print(final_data_set_train_wl2)
+# print(final_data_set_train_wl2)
