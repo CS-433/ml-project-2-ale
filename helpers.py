@@ -54,15 +54,21 @@ def load_csv_data_updated(data_path):
         alphas = results["alphas"]
         betas = results["betas"]
         id = results["ID"]
+        id = np.squeeze(id)
         wl2 = results["W_l2"]
         wlog = results["W_log"]
         size_wl2 = results["W_l2_size"]
         size_wl2 = size_wl2[0][0]
         size_wl2 = np.squeeze(size_wl2)
+        size_wlog = results["W_log_size"]
+        size_wlog = size_wlog[0][0]
+        size_wlog = np.squeeze(size_wlog)
         wl2 = wl2[0][0]
         wlog = wlog[0][0]
         alphas = alphas[0][0].T
         betas = betas[0][0].T
+        # print(size_wl2)
+        # print(size_wlog)
 
         if session == "3-Restin_rmegpreproc_bandpass-envelop":
             # train for wl2
@@ -72,6 +78,7 @@ def load_csv_data_updated(data_path):
                 for j in range(size_wl2[3]-1):
                     matrix = wl2[:, :, i, j]
                     column_vector = read_matrix(matrix)
+                    column_vector = np.insert(column_vector, 0, id)
                     if data_set_wl2.size == 0:
                         data_set_wl2 = column_vector
                     else:
@@ -86,9 +93,10 @@ def load_csv_data_updated(data_path):
             for a in range(betas.shape[0]):
                 data_set_wlog = np.array([])
                 # range(wlog.shape[3]-1)
-                for b in range(size_wl2[3]-1):
+                for b in range(size_wlog[3]-1):
                     matrix = wlog[:, :, a, b]
                     column_vector = read_matrix(matrix)
+                    column_vector = np.insert(column_vector, 0, id)
                     if data_set_wlog.size == 0:
                         data_set_wlog = column_vector
                     else:
@@ -108,12 +116,13 @@ def load_csv_data_updated(data_path):
                 for j in range(size_wl2[3]-1):
                     matrix = wl2[:, :, i, j]
                     column_vector = read_matrix(matrix)
+                    column_vector = np.insert(column_vector, 0, id)
                     if data_set_wl2.size == 0:
                         data_set_wl2 = column_vector
                     else:
                         data_set_wl2 = np.vstack((data_set_wl2, column_vector))
 
-                if number_of_files == 1:
+                if number_of_files == 5:
                     final_data_set_test_wl2.append(data_set_wl2)
                 else:
                     final_data_set_test_wl2[i] = np.vstack((final_data_set_test_wl2[i], data_set_wl2))
@@ -121,30 +130,30 @@ def load_csv_data_updated(data_path):
             # test for wlog
             for a in range(betas.shape[0]):
                 data_set_wlog = np.array([])
-                for b in range(size_wl2[3]-1):
+                for b in range(size_wlog[3]-1):
                     matrix = wlog[:, :, a, b]
                     column_vector = read_matrix(matrix)
+                    column_vector = np.insert(column_vector, 0, id)
                     if data_set_wlog.size == 0:
                         data_set_wlog = column_vector
                     else:
                         data_set_wlog = np.vstack((data_set_wlog, column_vector))
 
-                if number_of_files == 1:
+                if number_of_files == 5:
                     final_data_set_test_wlog.append(data_set_wlog)
                 else:
                     final_data_set_test_wlog[a] = np.vstack((final_data_set_test_wlog[a], data_set_wlog))
 
         number_of_files += 1
-    '''
+
     for alpha in range(20):
-        np.savetxt('train_wl2_' + str(alpha), final_data_set_train_wl2[alpha], delimeter=' ')
-        np.savetxt('test_wl2_' + str(alpha), final_data_set_test_wl2[alpha], delimeter=' ')
-        
+        np.savetxt(r'data_sets/train_wl2_' + str(alpha), final_data_set_train_wl2[alpha], delimiter=' ')
+        np.savetxt(r'data_sets/test_wl2_' + str(alpha), final_data_set_test_wl2[alpha], delimiter=' ')
+
     for beta in range(20):
-        np.savetxt('train_wlog_' + str(beta), final_data_set_train_wlog[beta], delimeter=' ')
-        np.savetxt('test_wlog_' + str(beta), final_data_set_test_wlog[beta], delimeter=' ')
-        
-    '''
+        np.savetxt(r'data_sets/train_wlog_' + str(beta), final_data_set_train_wlog[beta], delimiter=' ')
+        np.savetxt(r'data_sets/test_wlog_' + str(beta), final_data_set_test_wlog[beta], delimiter=' ')
+
     return final_data_set_train_wl2, final_data_set_train_wlog, final_data_set_test_wlog, final_data_set_test_wl2
 
 
