@@ -306,8 +306,8 @@ def readfile(filename, size_of_matrix=148):
 
     return upper_triangular_matrix
 
+
 def load_all_data_sets(band, regularization, type, parameter, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/'):
-    #TODO: test this function
     """
         Loads all the data sets created by create_sets with certain parameters and returns them.
 
@@ -329,17 +329,17 @@ def load_all_data_sets(band, regularization, type, parameter, path=r'../../Data3
 
     path_of_file = path
     if type == 'train':
-        path_of_file = path_of_file + 'train'
+        path_of_file = path_of_file + 'train/'
         if regularization == 'wlog':
             path_of_file = path_of_file + 'train_wlog_'
         elif regularization == 'wl2':
             path_of_file = path_of_file + 'train_wl2_'
     elif type == 'test':
-        path_of_file = path_of_file + 'test'
+        path_of_file = path_of_file + 'test/'
         if regularization == 'wlog':
             path_of_file = path_of_file + 'test_wlog_'
         elif regularization == 'wl2':
-            path_of_file = path_of_file + 'test_wl2'
+            path_of_file = path_of_file + 'test_wl2_'
 
     if band == 'alpha':
         path_of_file = path_of_file + 'alpha_'
@@ -354,15 +354,16 @@ def load_all_data_sets(band, regularization, type, parameter, path=r'../../Data3
 
     path_of_file = path_of_file+str(parameter)+'.txt'
 
-    matrix = np.load(path_of_file)
+    matrix = np.loadtxt(path_of_file)
 
-    ids = matrix[:,0]
+    ids = matrix[:, 0]
     matrix = np.delete(matrix, 0, axis=1)
 
-    return ids, matrix
+    return matrix, ids
 
 
-def load_one_matrix():
+# def load_one_matrix():
+
 
 '''
 def load_csv_data_updated(data_path):
@@ -449,4 +450,4 @@ def load_csv_data_updated(data_path):
             final_data_set_test_wlog.append(data_sets_wlog)
 
     return final_data_set_train_wl2, final_data_set_train_wlog, final_data_set_test_wlog, final_data_set_test_wl2
-'''
+    '''
