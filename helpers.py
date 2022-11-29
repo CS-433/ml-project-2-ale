@@ -33,7 +33,7 @@ def load_csv_data(data_path):
     return final_matrix, y_labels
 
 
-def load_csv_data_updated(data_path, save_file=True):
+def create_sets(data_path, save_file=True):
     path = os.path.join(data_path, '**/*.mat')
     files = glob.glob(path, recursive=True)
 
@@ -306,6 +306,63 @@ def readfile(filename, size_of_matrix=148):
 
     return upper_triangular_matrix
 
+def load_all_data_sets(band, regularization, type, parameter, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/'):
+    #TODO: test this function
+    """
+        Loads all the data sets created by create_sets with certain parameters and returns them.
+
+        Arguments:
+            - band: string that represents which band should be selected among 5 possibilities
+                - alpha
+                - beta
+                - delta
+                - gamma
+                - theta
+            - regularization: string either wl2 or wlog specifying which norm should be used
+            - type: string, either test or train specifying which type of data set we want
+            - parameter: float that represents either the parameter value of the alpha value if l2 is chosen or
+                         beta if log is chosen. 20 possible value
+
+        Returns:
+            - all files corresponding to those parameters
+        """
+
+    path_of_file = path
+    if type == 'train':
+        path_of_file = path_of_file + 'train'
+        if regularization == 'wlog':
+            path_of_file = path_of_file + 'train_wlog_'
+        elif regularization == 'wl2':
+            path_of_file = path_of_file + 'train_wl2_'
+    elif type == 'test':
+        path_of_file = path_of_file + 'test'
+        if regularization == 'wlog':
+            path_of_file = path_of_file + 'test_wlog_'
+        elif regularization == 'wl2':
+            path_of_file = path_of_file + 'test_wl2'
+
+    if band == 'alpha':
+        path_of_file = path_of_file + 'alpha_'
+    elif band == 'beta':
+        path_of_file = path_of_file + 'beta_'
+    elif band == 'delta':
+        path_of_file = path_of_file + 'delta_'
+    elif band == 'gamma':
+        path_of_file = path_of_file + 'gamma_'
+    elif band == 'theta':
+        path_of_file = path_of_file + 'theta_'
+
+    path_of_file = path_of_file+str(parameter)+'.txt'
+
+    matrix = np.load(path_of_file)
+
+    ids = matrix[:,0]
+    matrix = np.delete(matrix, 0, axis=1)
+
+    return ids, matrix
+
+
+def load_one_matrix():
 
 '''
 def load_csv_data_updated(data_path):
