@@ -253,12 +253,12 @@ def create_sets(data_path, save_file=True):
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wl2_' + 'alpha_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_train_wl2_alpha[alpha], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wl2_' + 'beta_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_train_wl2_beta[alpha], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wl2_' + 'delta_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_train_wl2_delta[alpha], delimiter=' ')
-            np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wl2_' + 'gamma_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_train_wl2_gamma[alpha],delimiter=' ')
+            np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wl2_' + 'gamma_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_train_wl2_gamma[alpha], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wl2_' + 'theta_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_train_wl2_theta[alpha], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wl2_' + 'alpha_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_test_wl2_alpha[alpha], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wl2_' + 'beta_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_test_wl2_beta[alpha], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wl2_' + 'delta_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_test_wl2_delta[alpha], delimiter=' ')
-            np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wl2_' + 'gamma_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_test_wl2_gamma[alpha],delimiter=' ')
+            np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wl2_' + 'gamma_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_test_wl2_gamma[alpha], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wl2_' + 'theta_' + str(np.squeeze(alphas[alpha])) + '.txt', final_data_set_test_wl2_theta[alpha], delimiter=' ')
             print("all files for alpha = " + str(np.squeeze(alphas[alpha])) + " saved")
 
@@ -266,12 +266,12 @@ def create_sets(data_path, save_file=True):
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wlog_' + 'alpha_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_train_wlog_alpha[beta], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wlog_' + 'beta_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_train_wlog_beta[beta], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wlog_' + 'delta_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_train_wlog_delta[beta], delimiter=' ')
-            np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wlog_' + 'gamma_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_train_wlog_gamma[beta],delimiter=' ')
+            np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wlog_' + 'gamma_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_train_wlog_gamma[beta], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wlog_' + 'theta_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_train_wlog_theta[beta], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wlog_' + 'alpha_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_test_wlog_alpha[beta], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wlog_' + 'beta_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_test_wlog_beta[beta], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wlog_' + 'delta_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_test_wlog_delta[beta], delimiter=' ')
-            np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wlog_' + 'gamma_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_test_wlog_gamma[beta],delimiter=' ')
+            np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wlog_' + 'gamma_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_test_wlog_gamma[beta], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wlog_' + 'theta_' + str(np.squeeze(betas[beta])) + '.txt', final_data_set_test_wlog_theta[beta], delimiter=' ')
             print("all files for beta = " + str(np.squeeze(betas[beta])) + " saved")
 
@@ -307,7 +307,7 @@ def readfile(filename, size_of_matrix=148):
     return upper_triangular_matrix
 
 
-def load_all_data_sets(band, regularization, type, parameter, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/'):
+def load_data_set(band, regularization, type, parameter, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/'):
     """
         Loads all the data sets created by create_sets with certain parameters and returns them.
 
@@ -360,94 +360,3 @@ def load_all_data_sets(band, regularization, type, parameter, path=r'../../Data3
     matrix = np.delete(matrix, 0, axis=1)
 
     return matrix, ids
-
-
-# def load_one_matrix():
-
-
-'''
-def load_csv_data_updated(data_path):
-    path = os.path.join(data_path, '**/*.mat')
-    files = glob.glob(path, recursive=True)
-
-    final_data_set_train_wl2 = np.empty((75, 10878, 20))
-    final_data_set_test_wl2 = np.empty((75, 10878, 20))
-    final_data_set_train_wlog = np.empty((75, 10878, 20))
-    final_data_set_test_wlog = np.empty((75, 10878, 20))
-    # TODO: somewhere we will need to add the labels !!!!
-
-    for file in files:
-        # TODO:  we will have to put all of this in a function that we can call for both cases of the if
-
-        data = scipy.io.loadmat(file, appendmat=0)
-        results = data['RESULTS']
-        session = results["session"]
-        alphas = results["alphas"]
-        betas = results["betas"]
-        id = results["ID"]
-        wl2 = results["W_l2"]
-        wlog = results["W_log"]
-        wl2 = wl2[0][0]
-        wlog = wlog[0][0]
-        alphas = alphas[0][0].T
-        betas = betas[0][0].T
-
-        if session == "3-Restin_rmegpreproc_bandpass-envelop":
-            # train for wl2
-            # data_sets_wl2 = []
-            for i in range(alphas.shape[0]):
-                data_set_wl2 = np.empty((25, 10878))
-                for j in range(wl2.shape[3]):
-                    matrix = wl2[:, :, i, j]
-                    column_vector = read_matrix(matrix)
-                    np.vstack((data_set_wl2, column_vector))
-                    print(data_set_wl2.shape)
-                np.vstack((final_data_set_train_wl2[:, :, i], data_set_wl2))
-
-            # stacks the data set in 3rd dimension
-            # data_sets_wl2 = np.dstack(data_sets_wl2)
-
-            # final_data_set_train_wl2.append(data_sets_wl2)
-
-            # train for wlog
-            data_sets_wlog = []
-            for a in range(betas.shape[0]):
-                data_set_wlog = []
-                for b in range(wlog.shape[3]):
-                    matrix = wlog[:, :, a, b]
-                    column_vector = read_matrix(matrix)
-                    data_set_wlog.append(column_vector)
-                data_sets_wlog.append(data_set_wlog)
-
-            data_sets_wlog = np.dstack(data_sets_wlog)  # stacks the data set in 3rd dimension
-            final_data_set_train_wlog.append(data_sets_wlog)
-
-        elif session == "4-Restin_rmegpreproc_bandpass-envelop":
-            # test for wl2
-            data_sets_wl2 = []
-            for i in range(alphas.shape[0]):
-                data_set_wl2 = []
-                for j in range(wl2.shape[3]):
-                    matrix = wl2[:, :, i, j]
-                    column_vector = read_matrix(matrix)
-                    data_set_wl2.append(column_vector)
-                data_sets_wl2.append(data_set_wl2)
-
-            data_sets_wl2 = np.dstack(data_sets_wl2)  # stacks the data set in 3rd dimension
-            final_data_set_test_wl2.append(data_sets_wl2)
-
-            # train for wlog
-            data_sets_wlog = []
-            for a in range(betas.shape[0]):
-                data_set_wlog = []
-                for b in range(wlog.shape[3]):
-                    matrix = wlog[:, :, a, b]
-                    column_vector = read_matrix(matrix)
-                    data_set_wlog.append(column_vector)
-                data_sets_wlog.append(data_set_wlog)
-
-            data_sets_wlog = np.dstack(data_sets_wlog)  # stacks the data set in 3rd dimension
-            final_data_set_test_wlog.append(data_sets_wlog)
-
-    return final_data_set_train_wl2, final_data_set_train_wlog, final_data_set_test_wlog, final_data_set_test_wl2
-    '''
