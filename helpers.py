@@ -285,13 +285,10 @@ def create_sets(data_path, save_file=True):
 
 
 def read_matrix(matrix, size_of_matrix=148):
-    # this function works!
+
     x = np.reshape(matrix, (size_of_matrix, size_of_matrix))
     indices_upper_triangular = np.triu_indices(size_of_matrix, 1)
     upper_triangular_matrix_vector = x[indices_upper_triangular]
-
-    # I do not understand why but the next line doesn't change anything,
-    # so the return is a column vector of shape (10'878, )
     upper_triangular_matrix_vector = upper_triangular_matrix_vector.reshape(1, -1)
 
     return upper_triangular_matrix_vector
@@ -309,7 +306,7 @@ def readfile(filename, size_of_matrix=148):
 
 def load_data_set(band, regularization, type, parameter, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/'):
     """
-        Loads all the data sets created by create_sets with certain parameters and returns them.
+        Loads the data sets created by create_sets with certain parameters and returns it.
 
         Arguments:
             - band: string that represents which band should be selected among 5 possibilities
@@ -322,9 +319,10 @@ def load_data_set(band, regularization, type, parameter, path=r'../../Data3/Hami
             - type: string, either test or train specifying which type of data set we want
             - parameter: float that represents either the parameter value of the alpha value if l2 is chosen or
                          beta if log is chosen. 20 possible value
+            - path: string where the test and train files are, default value is the path on the servers
 
         Returns:
-            - all files corresponding to those parameters
+            - the file corresponding to those parameters
         """
 
     path_of_file = path
