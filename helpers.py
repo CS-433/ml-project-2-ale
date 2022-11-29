@@ -329,28 +329,28 @@ def load_data_set(band, regularization, type, parameter, path=r'../../Data3/Hami
 
     path_of_file = path
     if type == 'train':
-        path_of_file = path_of_file + 'train/'
+        path_of_file += 'train/'
         if regularization == 'wlog':
-            path_of_file = path_of_file + 'train_wlog_'
+            path_of_file += 'train_wlog_'
         elif regularization == 'wl2':
-            path_of_file = path_of_file + 'train_wl2_'
+            path_of_file += 'train_wl2_'
     elif type == 'test':
-        path_of_file = path_of_file + 'test/'
+        path_of_file += 'test/'
         if regularization == 'wlog':
-            path_of_file = path_of_file + 'test_wlog_'
+            path_of_file += 'test_wlog_'
         elif regularization == 'wl2':
-            path_of_file = path_of_file + 'test_wl2_'
+            path_of_file += 'test_wl2_'
 
     if band == 'alpha':
-        path_of_file = path_of_file + 'alpha_'
+        path_of_file += 'alpha_'
     elif band == 'beta':
-        path_of_file = path_of_file + 'beta_'
+        path_of_file += 'beta_'
     elif band == 'delta':
-        path_of_file = path_of_file + 'delta_'
+        path_of_file += 'delta_'
     elif band == 'gamma':
-        path_of_file = path_of_file + 'gamma_'
+        path_of_file += 'gamma_'
     elif band == 'theta':
-        path_of_file = path_of_file + 'theta_'
+        path_of_file += 'theta_'
 
     path_of_file = path_of_file+str(parameter)+'.txt'
 
