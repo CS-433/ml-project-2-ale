@@ -4,41 +4,24 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import ConfusionMatrixDisplay
 
 
-# TODO: MAKE it work
-def plot_similarity_matrix(prediction_scores, title="similarity matrix", save_fig=False, show_values=False):
-    # x = np.arange(1, 49)
-    # y = np.arange(1, 49)
-    x = np.arange(1, 4)
-    y = np.arange(1, 4)
+def plot_confusion_matrix(y_test, y_pred, accuracy, save_path, save_fig=False, title="confusion_matrix"):
+    """
+        Plots the confusion matrix using the true and the predicted labels
+        Arguments:
+            - y_test: numpy array of size (D), labels corresponding to the test set, true labels
+            - y_pred: numpy array of size (D), predicted labels
+            - accuracy: accuracy of the model used to generate the y_pred
+            - save_path: where the figure will be saved if save_fig=True
+            - save_fig: whether the figure will be saved, default = False
+            - title: title of the plot and name of the file if the figure is saved
 
-    fig, ax = plt.subplots()
-    im = ax.imshow(prediction_scores)
-    # Setting the labels
-    ax.set_xticks(x)
-    ax.set_yticks(y)
-    # labeling respective list entries
-    # ax.set_xticklabels(str(x))
-    # ax.set_yticklabels(str(y))
-    # Rotate the tick labels and set their alignment.
-    plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
-             rotation_mode="anchor")
-    ax.set_title(title)
-    im = ax.imshow(prediction_scores)
-    if show_values:
-        for i in range(len(y)):
-            for j in range(len(x)):
-                text = plt.text(j, i, round(prediction_scores[i, j],4),
-                               ha="center", va="center", color="w")
-
-    fig.tight_layout()
-    if save_fig:
-        plt.savefig(title + ".png")
-    plt.show()
-
-
-def plot_confusion_matrix(model, x_test, y_test, ids, save_fig=False, title="confusion_matrix"):
-    ConfusionMatrixDisplay.from_estimator(model, x_test, y_test, display_labels=ids, xticks_rotation="horizontal")
+        """
+    ConfusionMatrixDisplay.from_predictions(y_test, y_pred, xticks_rotation="vertical", cmap="hot", colorbar=False,
+                                            normalize=None, include_values=False)
+    plt.title(title + " , accuracy: " + str(round(accuracy, 5)))
+    plt.xticks([])
+    plt.yticks([])
     plt.tight_layout()
     if save_fig:
-        plt.savefig(title + ".png")
+        plt.savefig(save_path + title + ".png")
     plt.show()

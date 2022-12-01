@@ -1,5 +1,5 @@
 import numpy as np
-
+from models import *
 from helpers import *
 import scipy.io
 
@@ -66,7 +66,7 @@ print(wlog.shape[2])
 print(wlog.shape[3])
 '''
 
-
+'''
 # Test of new load data
 # final_data_set_train_wl2, final_data_set_train_wlog, final_data_set_test_wlog, final_data_set_test_wl2 = load_csv_data_updated('MATLAB/learned_graphs')
 final_data_set_train_wl2_alpha, final_data_set_train_wl2_beta, final_data_set_train_wl2_delta, \
@@ -75,12 +75,12 @@ final_data_set_train_wl2_alpha, final_data_set_train_wl2_beta, final_data_set_tr
     final_data_set_test_wl2_theta, final_data_set_train_wlog_alpha, final_data_set_train_wlog_beta, \
     final_data_set_train_wlog_delta, final_data_set_train_wlog_gamma, final_data_set_train_wlog_theta,\
     final_data_set_test_wlog_alpha, final_data_set_test_wlog_beta, final_data_set_test_wlog_delta, \
-    final_data_set_test_wlog_gamma, final_data_set_test_wlog_theta = load_csv_data_updated('MATLAB/learned_graphs')
+    final_data_set_test_wlog_gamma, final_data_set_test_wlog_theta = load_csv_data_updated('data')
 
 print("wl2 train alpha:", len(final_data_set_train_wl2_alpha))
 print(final_data_set_train_wl2_alpha[0].shape)
 print("wlog test theta:", len(final_data_set_test_wlog_theta))
-print(final_data_set_test_wlog_theta[0].shape)
+print(final_data_set_test_wlog_theta[0].shape) '''
 
 '''print("wlog train:", len(final_data_set_train_wlog))
 print(final_data_set_train_wlog[0].shape)
@@ -93,3 +93,23 @@ print(final_data_set_test_wlog[0].shape)'''
 # print(final_data_set_train_wl2)
 
 
+###### Script used to test the SVM model on the servers ######
+
+# x_train, y_train = load_data_set("alpha", "wl2", "train", 0.9, path=r'../data_sets/')
+# x_test, y_test = load_data_set("alpha", "wl2", "test", 0.9, path=r'../data_sets/')
+x_train, y_train = load_data_set("alpha", "wl2", "train", 0.5, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/')
+x_test, y_test = load_data_set("alpha", "wl2", "test", 0.5, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/')
+print(x_train.shape)
+print(y_train.shape)
+print(x_test.shape)
+print(y_test.shape)
+
+title = "confusion_matrix_wl2_alpha_0.5"
+# accuracy, C, gamma, kernel = SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test, save_fig=True, title=title,
+#                                                       save_path='plots/')
+accuracy, C, gamma, kernel = SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test, save_fig=True, title=title,
+                                                       save_path='../../Data3/Hamid_ML4Science_ALE/plots/')
+print(accuracy)
+print(C)
+print(gamma)
+print(kernel)
