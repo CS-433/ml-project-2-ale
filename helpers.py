@@ -308,7 +308,7 @@ def readfile(filename, size_of_matrix=148):
     return upper_triangular_matrix
 
 
-
+'''
 def preprocessing(data):
 
     df = pd.DataFrame(data)
@@ -346,7 +346,7 @@ def visualisation (data):
     #want to see how it plots x vs y ?
     #df.plot()
     
-
+'''
 def load_data_set(band, regularization, type, parameter, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/'):
     """
         Loads the data sets created by create_sets with certain parameters and returns it.
