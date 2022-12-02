@@ -14,7 +14,6 @@ def plot_confusion_matrix(y_test, y_pred, accuracy, save_path, save_fig=False, t
             - save_path: where the figure will be saved if save_fig=True
             - save_fig: whether the figure will be saved, default = False
             - title: title of the plot and name of the file if the figure is saved
-
         """
     ConfusionMatrixDisplay.from_predictions(y_test, y_pred, xticks_rotation="vertical", cmap="hot", colorbar=False,
                                             normalize=None, include_values=False)

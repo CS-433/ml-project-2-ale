@@ -1,3 +1,5 @@
+import pandas as pd
+
 from models import *
 from plots import *
 from helpers import *
@@ -40,25 +42,33 @@ plot_confusion_matrix(model, x_test, y_test, ids=y_test) '''
 
 
 bands = ["alpha", "beta", "delta", "gamma", "theta"]
-# TODO find the alphas
-alphas = []
+# alphas = np.linspace(0.05, 1, num=20, endpoint=True)
+alphas = [0.05, 0.1, 0.15000000000000002, 0.2, 0.25, 0.3, 0.35000000000000003, 0.4, 0.45,0.5, 0.55, 0.6,
+          0.6499999999999999, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.]
+'''alphas[2] = 0.15000000000000002
+alphas[12] = 0.6499999999999999
+alphas[6] = 0.35000000000000003'''
+print(alphas)
+
 reg = "wl2"
-accuracies = np.zeros((len(bands), len(alphas)))
+band = "alpha"
+
+"""accuracies = np.zeros((len(bands), len(alphas)))
 best_Cs = np.zeros((len(bands), len(alphas)))
 best_gammas = np.zeros((len(bands), len(alphas)))
-best_kernels = np.zeros((len(bands), len(alphas)))
+best_kernels = np.zeros((len(bands), len(alphas)))"""
+accuracy_table = pd.DataFrame(columns=['reg', 'band', 'alpha/beta', 'C', 'gamma', 'kernel', 'accuracy'])
 
-for i, band in enumerate(bands):
-    for j, alpha in enumerate(alphas):
-        x_train, y_train = load_data_set(band, reg, "train", alpha, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/')
-        x_test, y_test = load_data_set(band, reg, "test", alpha, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/')
-        title = "confusion_matrix_" + reg + "_" + band + "_" + str(alpha)
-        accuracy, C, gamma, kernel = SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test, save_fig=False, title=title)
-        accuracies[i, j] = accuracy
-        best_Cs[i, j] = C
-        best_gammas[i, j] = gamma
-        best_kernels[i, j] = kernel
+for j, alpha in enumerate(alphas):
+    # x_train, y_train = load_data_set(band, reg, "train", alpha, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/')
+    # x_test, y_test = load_data_set(band, reg, "test", alpha, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/')
+    x_train, y_train = load_data_set(band, reg, "train", alpha, path=r'../data_sets/')
+    x_test, y_test = load_data_set(band, reg, "test", alpha, path=r'../data_sets/')
+    title = "confusion_matrix_" + reg + "_" + band + "_" + str(alpha)
+    accuracy, C, gamma, kernel = SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test, save_fig=False, title=title)
+    new_row = pd.Series(data={'reg': reg, 'band': band, 'alpha/beta': alpha, 'C': C, 'gamma': gamma, 'kernel': kernel,
+                              'accuracy': accuracy}, name=j)
+    accuracy_table = accuracy_table.append(new_row, ignore_index=False)
 
-# TODO: get min accuracies and which param
-# TODO: maybe save the accuracies in a file
-print(accuracies)
+print(accuracy_table)
+accuracy_table.to_csv(path_or_buf='test_accuracy_table.csv')
