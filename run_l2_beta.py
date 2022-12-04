@@ -9,6 +9,8 @@ reg = "wl2"
 band = "beta"
 accuracy_table = pd.DataFrame(columns=['reg', 'band', 'alpha/beta', 'C', 'gamma', 'kernel', 'accuracy'])
 
+print("starting predictions")
+
 for j, alpha in enumerate(alphas):
     x_train, y_train = load_data_set(band, reg, "train", alpha, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/')
     x_test, y_test = load_data_set(band, reg, "test", alpha, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/')
@@ -17,5 +19,9 @@ for j, alpha in enumerate(alphas):
     new_row = pd.Series(data={'reg': reg, 'band': band, 'alpha/beta': alpha, 'C': C, 'gamma': gamma, 'kernel': kernel,
                               'accuracy': accuracy}, name=j)
     accuracy_table = accuracy_table.append(new_row, ignore_index=False)
+    print("prediction done with alpha: " + str(alpha))
 
-accuracy_table.to_csv(path_or_buf=r'../../Data3/Hamid_ML4Science_ALE/accuracy_table_l2_alpha.csv')
+print("all predictions done")
+
+accuracy_table.to_csv(path_or_buf=r'../../Data3/Hamid_ML4Science_ALE/accuracy_table_l2_beta.csv')
+print("accuracy table successfully saved")
