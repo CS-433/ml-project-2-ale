@@ -96,12 +96,16 @@ def complete_final_data_set(final_data_set, temp_data_set, params, col_index):
 
 
 def create_final_data_set(data_set_alpha, data_set_beta, data_set_delta, data_set_gamma, data_set_theta, params, size_w,
-                          w, id, frequency_band):
+                          w, id, frequency_band, last_epoch):
     for i in range(params.shape[0]):
         data_set_temp = np.array([])
-        for j in range(size_w[3] - 1):
-            matrix = w[:, :, i, j]
+        if last_epoch:
+            matrix = w[:, :, i, size_w[3] - 1]
             data_set_temp = create_set_epochs(data_set_temp, matrix, id)
+        else:
+            for j in range(size_w[3] - 1):
+                matrix = w[:, :, i, j]
+                data_set_temp = create_set_epochs(data_set_temp, matrix, id)
         if frequency_band == "alpha":
             data_set_alpha = complete_final_data_set(data_set_alpha, data_set_temp, params, i)
         elif frequency_band == "beta":
@@ -115,18 +119,31 @@ def create_final_data_set(data_set_alpha, data_set_beta, data_set_delta, data_se
     return data_set_alpha, data_set_beta, data_set_delta, data_set_gamma, data_set_theta
 
 
-def create_all_sets(data_path, save_file=True, verbose=True):
+def create_all_sets(data_path, save_file=True, verbose=True, last_epoch=False):
     path = os.path.join(data_path, '**/*.mat')
     files = glob.glob(path, recursive=True)
 
     # declare all the final data sets (1 per band per regularization) as an empty list
-    final_data_set_train_wl2_alpha = final_data_set_train_wl2_beta = final_data_set_train_wl2_delta = \
-        final_data_set_train_wl2_gamma = final_data_set_train_wl2_theta = final_data_set_test_wl2_alpha = \
-        final_data_set_test_wl2_beta = final_data_set_test_wl2_delta = final_data_set_test_wl2_gamma = \
-        final_data_set_test_wl2_theta = final_data_set_train_wlog_alpha = final_data_set_train_wlog_beta = \
-        final_data_set_train_wlog_delta = final_data_set_train_wlog_gamma = final_data_set_train_wlog_theta = \
-        final_data_set_test_wlog_alpha = final_data_set_test_wlog_beta = final_data_set_test_wlog_delta = \
-        final_data_set_test_wlog_gamma = final_data_set_test_wlog_theta = []
+    final_data_set_train_wl2_alpha = []
+    final_data_set_train_wl2_beta = []
+    final_data_set_train_wl2_delta = []
+    final_data_set_train_wl2_gamma = []
+    final_data_set_train_wl2_theta = []
+    final_data_set_test_wl2_alpha = []
+    final_data_set_test_wl2_beta = []
+    final_data_set_test_wl2_delta = []
+    final_data_set_test_wl2_gamma = []
+    final_data_set_test_wl2_theta = []
+    final_data_set_train_wlog_alpha = []
+    final_data_set_train_wlog_beta = []
+    final_data_set_train_wlog_delta = []
+    final_data_set_train_wlog_gamma = []
+    final_data_set_train_wlog_theta = []
+    final_data_set_test_wlog_alpha = []
+    final_data_set_test_wlog_beta = []
+    final_data_set_test_wlog_delta = []
+    final_data_set_test_wlog_gamma = []
+    final_data_set_test_wlog_theta = []
 
     number_of_files = 0
     for file in files:
@@ -143,7 +160,7 @@ def create_all_sets(data_path, save_file=True, verbose=True):
                                                                        final_data_set_train_wl2_delta,
                                                                        final_data_set_train_wl2_gamma,
                                                                        final_data_set_train_wl2_theta, alphas, size_wl2,
-                                                                       wl2, id, frequency_band)
+                                                                       wl2, id, frequency_band, last_epoch)
 
             # train for wlog
             final_data_set_train_wlog_alpha, final_data_set_train_wlog_beta, \
@@ -153,7 +170,7 @@ def create_all_sets(data_path, save_file=True, verbose=True):
                                                                         final_data_set_train_wlog_delta,
                                                                         final_data_set_train_wlog_gamma,
                                                                         final_data_set_train_wlog_theta, betas,
-                                                                        size_wlog, wlog, id, frequency_band)
+                                                                        size_wlog, wlog, id, frequency_band, last_epoch)
 
         # create the test data set with session 4
         elif session == "4-Restin_rmegpreproc_bandpass-envelop":
@@ -165,7 +182,7 @@ def create_all_sets(data_path, save_file=True, verbose=True):
                                                                       final_data_set_test_wl2_delta,
                                                                       final_data_set_test_wl2_gamma,
                                                                       final_data_set_test_wl2_theta, alphas, size_wl2,
-                                                                      wl2, id, frequency_band)
+                                                                      wl2, id, frequency_band, last_epoch)
 
             # test for wlog
             final_data_set_test_wlog_alpha, final_data_set_test_wlog_beta, \
@@ -175,7 +192,7 @@ def create_all_sets(data_path, save_file=True, verbose=True):
                                                                        final_data_set_test_wlog_delta,
                                                                        final_data_set_test_wlog_gamma,
                                                                        final_data_set_test_wlog_theta, betas,
-                                                                       size_wlog, wlog, id, frequency_band)
+                                                                       size_wlog, wlog, id, frequency_band, last_epoch)
 
         if verbose:
             print("file " + str(number_of_files) + " loaded")
@@ -183,51 +200,58 @@ def create_all_sets(data_path, save_file=True, verbose=True):
 
     # save all the files
     if save_file:
+        if last_epoch:
+            name = '_all_epochs_combined'
+        else:
+            name = ''
+
         for alpha in range(alphas.shape[0]):
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wl2_' + 'alpha_' + str(
-                np.squeeze(alphas[alpha])) + '.txt', final_data_set_train_wl2_alpha[alpha], delimiter=' ')
+                np.squeeze(alphas[alpha])) + name + '.txt', final_data_set_train_wl2_alpha[alpha], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wl2_' + 'beta_' + str(
-                np.squeeze(alphas[alpha])) + '.txt', final_data_set_train_wl2_beta[alpha], delimiter=' ')
+                np.squeeze(alphas[alpha])) + name + '.txt', final_data_set_train_wl2_beta[alpha], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wl2_' + 'delta_' + str(
-                np.squeeze(alphas[alpha])) + '.txt', final_data_set_train_wl2_delta[alpha], delimiter=' ')
+                np.squeeze(alphas[alpha])) + name + '.txt', final_data_set_train_wl2_delta[alpha], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wl2_' + 'gamma_' + str(
-                np.squeeze(alphas[alpha])) + '.txt', final_data_set_train_wl2_gamma[alpha], delimiter=' ')
+                np.squeeze(alphas[alpha])) + name + '.txt', final_data_set_train_wl2_gamma[alpha], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wl2_' + 'theta_' + str(
-                np.squeeze(alphas[alpha])) + '.txt', final_data_set_train_wl2_theta[alpha], delimiter=' ')
+                np.squeeze(alphas[alpha])) + name + '.txt', final_data_set_train_wl2_theta[alpha], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wl2_' + 'alpha_' + str(
-                np.squeeze(alphas[alpha])) + '.txt', final_data_set_test_wl2_alpha[alpha], delimiter=' ')
+                np.squeeze(alphas[alpha])) + name + '.txt', final_data_set_test_wl2_alpha[alpha], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wl2_' + 'beta_' + str(
-                np.squeeze(alphas[alpha])) + '.txt', final_data_set_test_wl2_beta[alpha], delimiter=' ')
+                np.squeeze(alphas[alpha])) + name + '.txt', final_data_set_test_wl2_beta[alpha], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wl2_' + 'delta_' + str(
-                np.squeeze(alphas[alpha])) + '.txt', final_data_set_test_wl2_delta[alpha], delimiter=' ')
+                np.squeeze(alphas[alpha])) + name + '.txt', final_data_set_test_wl2_delta[alpha], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wl2_' + 'gamma_' + str(
-                np.squeeze(alphas[alpha])) + '.txt', final_data_set_test_wl2_gamma[alpha], delimiter=' ')
+                np.squeeze(alphas[alpha])) + name + '.txt', final_data_set_test_wl2_gamma[alpha], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wl2_' + 'theta_' + str(
-                np.squeeze(alphas[alpha])) + '.txt', final_data_set_test_wl2_theta[alpha], delimiter=' ')
-            print("all files for alpha = " + str(np.squeeze(alphas[alpha])) + " saved")
+                np.squeeze(alphas[alpha])) + name + '.txt', final_data_set_test_wl2_theta[alpha], delimiter=' ')
+            if verbose:
+                print("all files for alpha = " + str(np.squeeze(alphas[alpha])) + " saved")
 
         for beta in range(betas.shape[0]):
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wlog_' + 'alpha_' + str(
-                np.squeeze(betas[beta])) + '.txt', final_data_set_train_wlog_alpha[beta], delimiter=' ')
+                np.squeeze(betas[beta])) + name + '.txt', final_data_set_train_wlog_alpha[beta], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wlog_' + 'beta_' + str(
-                np.squeeze(betas[beta])) + '.txt', final_data_set_train_wlog_beta[beta], delimiter=' ')
+                np.squeeze(betas[beta])) + name + '.txt', final_data_set_train_wlog_beta[beta], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wlog_' + 'delta_' + str(
-                np.squeeze(betas[beta])) + '.txt', final_data_set_train_wlog_delta[beta], delimiter=' ')
+                np.squeeze(betas[beta])) + name + '.txt', final_data_set_train_wlog_delta[beta], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wlog_' + 'gamma_' + str(
-                np.squeeze(betas[beta])) + '.txt', final_data_set_train_wlog_gamma[beta], delimiter=' ')
+                np.squeeze(betas[beta])) + name + '.txt', final_data_set_train_wlog_gamma[beta], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/train/train_wlog_' + 'theta_' + str(
-                np.squeeze(betas[beta])) + '.txt', final_data_set_train_wlog_theta[beta], delimiter=' ')
+                np.squeeze(betas[beta])) + name + '.txt', final_data_set_train_wlog_theta[beta], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wlog_' + 'alpha_' + str(
-                np.squeeze(betas[beta])) + '.txt', final_data_set_test_wlog_alpha[beta], delimiter=' ')
+                np.squeeze(betas[beta])) + name + '.txt', final_data_set_test_wlog_alpha[beta], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wlog_' + 'beta_' + str(
-                np.squeeze(betas[beta])) + '.txt', final_data_set_test_wlog_beta[beta], delimiter=' ')
+                np.squeeze(betas[beta])) + name + '.txt', final_data_set_test_wlog_beta[beta], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wlog_' + 'delta_' + str(
-                np.squeeze(betas[beta])) + '.txt', final_data_set_test_wlog_delta[beta], delimiter=' ')
+                np.squeeze(betas[beta])) + name + '.txt', final_data_set_test_wlog_delta[beta], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wlog_' + 'gamma_' + str(
-                np.squeeze(betas[beta])) + '.txt', final_data_set_test_wlog_gamma[beta], delimiter=' ')
+                np.squeeze(betas[beta])) + name + '.txt', final_data_set_test_wlog_gamma[beta], delimiter=' ')
             np.savetxt(r'../../Data3/Hamid_ML4Science_ALE/data_sets/test/test_wlog_' + 'theta_' + str(
-                np.squeeze(betas[beta])) + '.txt', final_data_set_test_wlog_theta[beta], delimiter=' ')
-            print("all files for beta = " + str(np.squeeze(betas[beta])) + " saved")
+                np.squeeze(betas[beta])) + name + '.txt', final_data_set_test_wlog_theta[beta], delimiter=' ')
+            if verbose:
+                print("all files for beta = " + str(np.squeeze(betas[beta])) + " saved")
 
     return final_data_set_train_wl2_alpha, final_data_set_train_wl2_beta, final_data_set_train_wl2_delta, \
         final_data_set_train_wl2_gamma, final_data_set_train_wl2_theta, final_data_set_test_wl2_alpha, \
