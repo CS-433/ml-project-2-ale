@@ -42,8 +42,8 @@ def SVM_predict(x_train, y_train, x_test, C=1, gamma='scale', kernel='rbf'):
 
 
 def SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test, save_path='', C_params=[0.1, 1, 10, 100],
-                              gamma_params=[10, 1, 0.1, 0.01, 0.001, 0.0001], kernel_params=['rbf', 'poly', 'sigmoid'],
-                              save_fig=False, title="confusion_matrix"):
+                              gamma_params=[10, 1, 0.1, 0.01, 0.001, 0.0001, 'scale'], kernel_params=['rbf', 'poly', 'sigmoid'],
+                              save_fig=False, title="confusion_matrix", grid_search=True):
     """
        Performs a grid search + 5-folds CV over all the given parameter to find the best SVM model for our training set
        Fits this best model to our training set and use it to predict the labels of our test set
@@ -68,13 +68,19 @@ def SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test, save_path='', C_
            - best_C, best_gamma, best_kernel: the SVM hyperparameters used in our SVM model (selected with 5-fold CV)
        """
 
-    # grid search
-    params = {'C': C_params, 'gamma': gamma_params, 'kernel': kernel_params}
-    grid_search = GridSearchCV(estimator=SVC(), param_grid=params, cv=5, n_jobs=5, verbose=1)
-    grid_search.fit(x_train, y_train)
-    best_C = grid_search.best_params_["C"]
-    best_gamma = grid_search.best_params_["gamma"]
-    best_kernel = grid_search.best_params_["kernel"]
+    if grid_search:
+        # grid search
+        params = {'C': C_params, 'gamma': gamma_params, 'kernel': kernel_params}
+        grid_search = GridSearchCV(estimator=SVC(), param_grid=params, cv=5, n_jobs=5, verbose=1)
+        grid_search.fit(x_train, y_train)
+        best_C = grid_search.best_params_["C"]
+        best_gamma = grid_search.best_params_["gamma"]
+        best_kernel = grid_search.best_params_["kernel"]
+    else:
+        # TODO: see which ones are best for our datasets
+        best_C = 1
+        best_gamma = 'scale'
+        best_kernel = 'rbf'
 
     # prediction
     pred, train_accuracy = SVM_predict(x_train, y_train, x_test, C=best_C, gamma=best_gamma, kernel=best_kernel)

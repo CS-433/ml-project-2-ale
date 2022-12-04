@@ -23,4 +23,5 @@ def plot_confusion_matrix(y_test, y_pred, accuracy, save_path, save_fig=False, t
     plt.tight_layout()
     if save_fig:
         plt.savefig(save_path + title + ".png")
-    plt.show()
+    else:
+        plt.show()

@@ -281,7 +281,7 @@ def readfile(filename, size_of_matrix=148):
     return upper_triangular_matrix
 
 
-def load_data_set(band, regularization, type, parameter, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/'):
+def load_data_set(band, regularization, type, parameter, epochs_combined=False, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/'):
     """
         Loads the data sets created by create_sets with certain parameters and returns it.
 
@@ -327,7 +327,10 @@ def load_data_set(band, regularization, type, parameter, path=r'../../Data3/Hami
     elif band == 'theta':
         path_of_file += 'theta_'
 
-    path_of_file = path_of_file + str(parameter) + '.txt'
+    if epochs_combined:
+        path_of_file = path_of_file + str(parameter) + '_all_epochs_combined' + '.txt'
+    else:
+        path_of_file = path_of_file + str(parameter) + '.txt'
 
     matrix = np.loadtxt(path_of_file)
 
