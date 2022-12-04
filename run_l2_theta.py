@@ -15,7 +15,8 @@ for j, alpha in enumerate(alphas):
     x_train, y_train = load_data_set(band, reg, "train", alpha, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/')
     x_test, y_test = load_data_set(band, reg, "test", alpha, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/')
     title = "confusion_matrix_" + reg + "_" + band + "_" + str(alpha)
-    accuracy, C, gamma, kernel = SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test, save_fig=True, title=title, save_path=r'../../Data3/Hamid_ML4Science_ALE/plots/')
+    accuracy, C, gamma, kernel = SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test, save_fig=True, title=title,
+                                                           save_path=r'../../Data3/Hamid_ML4Science_ALE/SVM_updated_GS/plots/')
     new_row = pd.Series(data={'reg': reg, 'band': band, 'alpha/beta': alpha, 'C': C, 'gamma': gamma, 'kernel': kernel,
                               'accuracy': accuracy}, name=j)
     accuracy_table = accuracy_table.append(new_row, ignore_index=False)
@@ -23,5 +24,5 @@ for j, alpha in enumerate(alphas):
 
 print("all predictions done")
 
-accuracy_table.to_csv(path_or_buf=r'../../Data3/Hamid_ML4Science_ALE/accuracy_table_l2_theta.csv')
+accuracy_table.to_csv(path_or_buf=r'../../Data3/Hamid_ML4Science_ALE/SVM_updated_GS/accuracy_table_l2_theta.csv')
 print("accuracy table successfully saved")

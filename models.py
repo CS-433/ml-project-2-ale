@@ -6,6 +6,7 @@ from sklearn.preprocessing import StandardScaler
 from plots import *
 from helpers import *
 from sklearn.model_selection import GridSearchCV
+import pandas as pd
 
 # need to visualize the data -> if sparse no normalizing but scaling
 # check outliers
@@ -42,7 +43,7 @@ def SVM_predict(x_train, y_train, x_test, C=1, gamma='scale', kernel='rbf'):
 
 
 def SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test, save_path='', C_params=[0.1, 1, 10, 100],
-                              gamma_params=[10, 1, 0.1, 0.01, 0.001, 0.0001, 'scale'], kernel_params=['rbf', 'poly', 'sigmoid'],
+                              gamma_params=[10, 1, 0.1, 0.01, 0.001, 'scale'], kernel_params=['rbf', 'sigmoid'],
                               save_fig=False, title="confusion_matrix", grid_search=True):
     """
        Performs a grid search + 5-folds CV over all the given parameter to find the best SVM model for our training set
@@ -76,8 +77,11 @@ def SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test, save_path='', C_
         best_C = grid_search.best_params_["C"]
         best_gamma = grid_search.best_params_["gamma"]
         best_kernel = grid_search.best_params_["kernel"]
+        results = pd.DataFrame(grid_search.cv_results_)
+        # results.to_csv(path_or_buf=r'../../Data3/Hamid_ML4Science_ALE/accuracy_table_grid_search_test.csv')
+        # results.to_csv(path_or_buf=r'accuracy_table_grid_search_test.csv')
+        # print(results[['param_kernel', 'param_gamma', 'param_C', 'mean_test_score']])
     else:
-        # TODO: see which ones are best for our datasets
         best_C = 1
         best_gamma = 'scale'
         best_kernel = 'rbf'
