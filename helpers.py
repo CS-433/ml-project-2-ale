@@ -358,3 +358,4 @@ def load_data_set(band, regularization, type, parameter, path=r'../../Data3/Hami
     matrix = np.delete(matrix, 0, axis=1)
 
     return matrix, ids
+
