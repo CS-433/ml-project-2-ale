@@ -7,6 +7,6 @@ final_data_set_train_wl2_alpha, final_data_set_train_wl2_beta, final_data_set_tr
     final_data_set_test_wl2_theta, final_data_set_train_wlog_alpha, final_data_set_train_wlog_beta, \
     final_data_set_train_wlog_delta, final_data_set_train_wlog_gamma, final_data_set_train_wlog_theta,\
     final_data_set_test_wlog_alpha, final_data_set_test_wlog_beta, final_data_set_test_wlog_delta, \
-    final_data_set_test_wlog_gamma, final_data_set_test_wlog_theta = create_sets('../../Data3/Hamid_ML4Science_ALE/MATLAB/learned_graphs')
+    final_data_set_test_wlog_gamma, final_data_set_test_wlog_theta = create_all_sets('../../Data3/Hamid_ML4Science_ALE/MATLAB/learned_graphs')
 
 print("data sets created")
