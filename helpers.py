@@ -306,24 +306,76 @@ def preprocessing(data):
     data = scaler.fit_transform(df)
 
     return data
-
-def visualisation (data):
-    df = pd.DataFrame(data)
-    df.describe(include='all')
-    #want to show column with low variance
-    # df.std(ddof=0) divide by N instead of N-1
-    variance = df.std()
-    df = df.reset_index()  # make sure indexes pair with number of rows
-
-    for index, row in variance.iterrows():
-        if row[index] < 0.001:
-            df.append(variance[index])
-
-
-    #want to see how it plots x vs y ?
-    #df.plot()
     
 '''
+
+def remove_col_lowvariance(datafr, threshold):
+    """
+    Args:
+        datafr: a pandas DataFrame
+        threshold: variance under this threshold will be removed
+
+    Returns: a DataFrame without the columns with variance bellow the threshold
+
+    """
+    variance = datafr.var()
+
+    dico = dict(list(enumerate(variance)))
+
+    selected_col = [key for key, value in dico.items()
+                    if value < threshold]
+    datafr_withoutvar = datafr.drop(selected_col, axis=1)
+
+    return datafr_withoutvar
+
+
+def fix_outliers_median(datafr):
+    """
+    Remove the outliers by fixing their values to the median value of its column
+    Args:
+        datafr: DataFrame
+
+    Returns: Dataframe with its outliers changed
+
+    """
+
+    median = datafr.median()
+    std = datafr.std()
+    value = datafr
+
+    outlierspos = (value > median + 3 * std)
+    outliersneg = (value < median - 3 * std)
+
+    datafr_withoutvarmed = datafr.mask(outlierspos, other=median, axis=1)
+
+    datafr_withoutvarmed = datafr.mask(outliersneg, other=median, axis=1)
+
+    return datafr_withoutvarmed
+
+
+def fix_outliers_std(datafr):
+    """
+    Remove the outliers by fixing their values to +/- 3 * standardization
+    Args:
+        datafr: DataFrame
+
+    Returns: Dataframe with its outliers changed
+
+    """
+
+    median = datafr.median()
+    std = datafr.std()
+    value = datafr
+
+    outlierspos = (value > median + 3 * std)
+    outliersneg = (value < median - 3 * std)
+
+    datafr_withoutvarstd = datafr.mask(outlierspos, other=3*std, axis=1)
+
+    datafr_withoutvarstd = datafr.mask(outliersneg, other=-3*std, axis=1)
+
+    return datafr_withoutvarstd
+
 
 def load_data_set(band, regularization, type, parameter, epochs_combined=False, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/'):
 
