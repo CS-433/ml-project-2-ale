@@ -44,7 +44,8 @@ def SVM_predict(x_train, y_train, x_test, C=1, gamma='scale', kernel='rbf'):
 
 def SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test, save_path='', C_params=[0.1, 1, 10, 100],
                               gamma_params=[10, 1, 0.1, 0.01, 0.001, 'scale'], kernel_params=['rbf', 'sigmoid'],
-                              save_fig=False, title="confusion_matrix", grid_search=True):
+                              save_fig=False, title="confusion_matrix", grid_search=True, default_C=1,
+                              default_gamma='scale', default_kernel='rbf'):
     """
        Performs a grid search + 5-folds CV over all the given parameter to find the best SVM model for our training set
        Fits this best model to our training set and use it to predict the labels of our test set
@@ -77,14 +78,11 @@ def SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test, save_path='', C_
         best_C = grid_search.best_params_["C"]
         best_gamma = grid_search.best_params_["gamma"]
         best_kernel = grid_search.best_params_["kernel"]
-        results = pd.DataFrame(grid_search.cv_results_)
-        # results.to_csv(path_or_buf=r'../../Data3/Hamid_ML4Science_ALE/accuracy_table_grid_search_test.csv')
-        # results.to_csv(path_or_buf=r'accuracy_table_grid_search_test.csv')
-        # print(results[['param_kernel', 'param_gamma', 'param_C', 'mean_test_score']])
+
     else:
-        best_C = 1
-        best_gamma = 'scale'
-        best_kernel = 'rbf'
+        best_C = default_C
+        best_gamma = default_gamma
+        best_kernel = default_kernel
 
     # prediction
     pred, train_accuracy = SVM_predict(x_train, y_train, x_test, C=best_C, gamma=best_gamma, kernel=best_kernel)
