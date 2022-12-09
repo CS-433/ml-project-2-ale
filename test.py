@@ -82,6 +82,23 @@ print(final_data_set_train_wl2_alpha[0].shape)
 print("wlog test theta:", len(final_data_set_test_wlog_theta))
 print(final_data_set_test_wlog_theta[0].shape) '''
 
+#size_wl2 = size_wl2.item()
+#size_wl2 = np.squeeze((size_wl2))
+
+wl2 = wl2[0][0]
+wlog = wlog[0][0]
+alphas = alphas[0][0].T
+band = results["band"]
+band = np.squeeze(band[0][0])
+print(band)
+'''
+print(alphas.shape[0])
+print(wlog.shape)
+print(wlog.shape[0])
+print(wlog.shape[1])
+print(wlog.shape[2])
+print(wlog.shape[3])
+'''
 '''print("wlog train:", len(final_data_set_train_wlog))
 print(final_data_set_train_wlog[0].shape)
 print("wl2 test:", len(final_data_set_test_wl2))
@@ -91,7 +108,16 @@ print(final_data_set_test_wlog[0].shape)'''
 # we have a list of size 20. Each element i of the list should be a matrix 360 (24*3*5) x 10878
 
 # print(final_data_set_train_wl2)
+'''
 
+file = scipy.io.loadmat('data/102816/102816.3-Restin.beta.sigformat_env.distance_gspbox.alphas_20.betas_20.noDownsampling.mat', appendmat=0)
+results = file['RESULTS']
+ID = results["ID"]
+wl2 = results["W_l2"]
+wlog = results["W_log"]
+session = results["session"]
+alphas = results["alphas"]
+size_wl2 = results["W_l2_size"]
 
 ###### Script used to test the SVM model on the servers ######
 
