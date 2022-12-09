@@ -1,3 +1,6 @@
+
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
 import glob
 import os
 import numpy as np
@@ -18,6 +21,7 @@ def load_csv_data(data_path):
     """
     path = data_path  # use my path
     all_files = Path(path).glob('*.csv')
+    print(all_files)
     # all_files = glob.glob(os.path.join(path, "/*.csv"))
 
     final_matrix = []
@@ -281,7 +285,100 @@ def readfile(filename, size_of_matrix=148):
     return upper_triangular_matrix
 
 
+'''
+def preprocessing(data):
+
+    df = pd.DataFrame(data)
+    #mean=df.mean(axis=1)
+    median = df.median(axis=1)
+    #change Nan value to the mean value of the column
+    #df.fillna(median)
+    #remove outliers: remplace by median values or +/- 3x the standard deviation of the feature
+    #df.std(ddof=0) divide by N instead of N-1
+    df[df > 3 * df.std() ] = 3 * df.std()
+    df[df < 3 * df.std()] = 3 * df.std()
+
+    #find low variance from visualisation, remove? df.drop([index],axis=1)
+
+    #standardize # define standard scaler
+    scaler = StandardScaler()
+    # transform data -> return an array of the standardize values
+    data = scaler.fit_transform(df)
+
+    return data
+    
+'''
+
+def remove_col_lowvariance(datafr, threshold):
+    """
+    Args:
+        datafr: a pandas DataFrame
+        threshold: variance under this threshold will be removed
+
+    Returns: a DataFrame without the columns with variance bellow the threshold
+
+    """
+    variance = datafr.var()
+
+    dico = dict(list(enumerate(variance)))
+
+    selected_col = [key for key, value in dico.items()
+                    if value < threshold]
+    datafr_withoutvar = datafr.drop(selected_col, axis=1)
+
+    return datafr_withoutvar
+
+
+def fix_outliers_median(datafr):
+    """
+    Remove the outliers by fixing their values to the median value of its column
+    Args:
+        datafr: DataFrame
+
+    Returns: Dataframe with its outliers changed
+
+    """
+
+    median = datafr.median()
+    std = datafr.std()
+    value = datafr
+
+    outlierspos = (value > median + 3 * std)
+    outliersneg = (value < median - 3 * std)
+
+    datafr_withoutvarmed = datafr.mask(outlierspos, other=median, axis=1)
+
+    datafr_withoutvarmed = datafr.mask(outliersneg, other=median, axis=1)
+
+    return datafr_withoutvarmed
+
+
+def fix_outliers_std(datafr):
+    """
+    Remove the outliers by fixing their values to +/- 3 * standardization
+    Args:
+        datafr: DataFrame
+
+    Returns: Dataframe with its outliers changed
+
+    """
+
+    median = datafr.median()
+    std = datafr.std()
+    value = datafr
+
+    outlierspos = (value > median + 3 * std)
+    outliersneg = (value < median - 3 * std)
+
+    datafr_withoutvarstd = datafr.mask(outlierspos, other=3*std, axis=1)
+
+    datafr_withoutvarstd = datafr.mask(outliersneg, other=-3*std, axis=1)
+
+    return datafr_withoutvarstd
+
+
 def load_data_set(band, regularization, type, parameter, epochs_combined=False, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/'):
+
     """
         Loads the data sets created by create_sets with certain parameters and returns it.
 
