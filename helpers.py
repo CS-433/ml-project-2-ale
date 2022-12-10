@@ -309,7 +309,7 @@ def preprocessing(data):
     
 '''
 
-def remove_col_lowvariance(datafr, threshold):
+def remove_col_lowvariance(datafrx, datafr_test, threshold):
     """
     Args:
         datafr: a pandas DataFrame
@@ -318,15 +318,17 @@ def remove_col_lowvariance(datafr, threshold):
     Returns: a DataFrame without the columns with variance bellow the threshold
 
     """
-    variance = datafr.var()
+    variance = datafrx.var()
 
     dico = dict(list(enumerate(variance)))
 
     selected_col = [key for key, value in dico.items()
                     if value < threshold]
-    datafr_withoutvar = datafr.drop(selected_col, axis=1)
+    datafrx_withoutvar = datafrx.drop(selected_col, axis=1)
+    datafr_test_withoutvar = datafr_test.drop(selected_col, axis=1)
 
-    return datafr_withoutvar
+
+    return datafrx_withoutvar,datafr_test_withoutvar
 
 
 def fix_outliers_median(datafr):
