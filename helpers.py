@@ -77,7 +77,7 @@ def load_mat_file(filename):
     wlog = wlog[0][0]
 
     return session, alphas, betas, np.squeeze(id_), np.squeeze(frequency_band), np.squeeze(size_wl2), \
-           np.squeeze(size_wlog), wl2, wlog
+        np.squeeze(size_wlog), wl2, wlog
 
 
 def create_set_epochs(data_set, w_sub_matrix, id):
@@ -435,4 +435,37 @@ def load_data_set(band, regularization, type, parameter, epochs_combined=False, 
     matrix = np.delete(matrix, 0, axis=1)
 
     return matrix, ids
+
+'''
+def average_all_epochs_per_setting(parameter, band, regularization, id, session):
+    #TODO
+    # get W matrices
+    # compute correlation
+    # rend un dataframe avec alpha, band, ID, session, reg, W matrix pour chaque setting (W is averaged over all epochs)
+'''
+
+
+
+def compute_inter_subj_correlations(train_matrix, test_matrices):
+    # test_matrices is a dictionary with ID and W matrix
+    # train matrix is one element of a dictionary with the matrix and its ID
+    # compare 1 subject test matrix in a specific setting to all train matrix
+    correlations = {}
+    train_matrix = np.squeeze(train_matrix.values()).flatten()
+    for id in test_matrices:
+        test_matrix = test_matrix[id].flatten()
+        correlation = np.corrcoef(train_matrix, test_matrix)
+        correlations[id] = correlation[0, 1]
+
+    pred_id = max(correlations, key=correlations.get)
+    real_id = train_matrix.keys()
+
+    return correlations, np.squeeze(pred_id), np.squeeze(real_id)
+
+
+def compute_accuracy(pred_ids, real_ids):
+    # takes two lists as arguments ordered in the same fashion to compare the ids stored in them
+    boolean_matrix = (pred_ids == real_ids)
+    accuracy = np.sum(boolean_matrix)/len(pred_ids)
+    return accuracy
 
