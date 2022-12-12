@@ -437,4 +437,3 @@ def load_data_set(band, regularization, type, parameter, epochs_combined=False, 
     matrix = np.delete(matrix, 0, axis=1)
 
     return matrix, ids
-
