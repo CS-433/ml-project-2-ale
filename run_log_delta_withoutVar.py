@@ -16,28 +16,31 @@ accuracy_table = pd.DataFrame(columns=['reg', 'band', 'alpha/beta', 'C', 'gamma'
 print("starting predictions")
 
 for j, beta in enumerate(betas):
+    x_train, y_train = load_data_set(band, reg, "train", beta, path=r'../../../Data3/Hamid_ML4Science_ALE/data_sets/')
+    x_test, y_test = load_data_set(band, reg, "test", beta, path=r'../../../Data3/Hamid_ML4Science_ALE/data_sets/')
     for indice, value in enumerate(threshold):
 
-        x_train, y_train = load_data_set(band, reg, "train", beta, path=r'../../../Data3/Hamid_ML4Science_ALE/data_sets/')
-        x_test, y_test = load_data_set(band, reg, "test", beta, path=r'../../../Data3/Hamid_ML4Science_ALE/data_sets/')
         x_train, x_test = remove_col_lowvariance(pd.DataFrame(x_train), pd.DataFrame(x_test), value)
-
         title = "confusion_matrix_" + reg + "_" + band + "_" + str(beta)+ "_"+str(value)
-        accuracy, C, gamma, kernel = SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test,
-                                                               save_path=r'../../../Data3/Hamid_ML4Science_ALE/SVMwithoutVar/plots/',
-                                                               C_params=[0.1, 1, 10, 100],
-                                                               gamma_params=[10, 1, 0.1, 0.01, 0.001, 'scale'],
-                                                               kernel_params=['rbf', 'sigmoid'],
-                                                               save_fig=False, title="confusion_matrix",
-                                                               grid_search=False, default_C=1,
-                                                               default_gamma='scale', default_kernel='rbf')
-        new_row = pd.Series(data={'reg': reg, 'band': band, 'alpha/beta': beta, 'C': C, 'gamma': gamma, 'kernel': kernel,
-                                  'accuracy': accuracy}, name=j)
-        accuracy_table = accuracy_table.append(new_row, ignore_index=False)
-        print("prediction done with threshold: " + str(value))
+        if x_train.size() != 0:
+            accuracy, C, gamma, kernel = SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test,
+                                                                   save_path=r'../../../Data3/Hamid_ML4Science_ALE/SVMwithoutVar/plots/',
+                                                                   C_params=[0.1, 1, 10, 100],
+                                                                   gamma_params=[10, 1, 0.1, 0.01, 0.001, 'scale'],
+                                                                   kernel_params=['rbf', 'sigmoid'],
+                                                                   save_fig=False, title="confusion_matrix",
+                                                                   grid_search=False, default_C=1,
+                                                                   default_gamma='scale', default_kernel='rbf')
+            new_row = pd.Series(data={'reg': reg, 'band': band, 'alpha/beta': beta, 'C': C, 'gamma': gamma, 'kernel': kernel,
+                                      'accuracy': accuracy}, name=j)
+            accuracy_table = accuracy_table.append(new_row, ignore_index=False)
+            print("prediction done with threshold: " + str(value))
+        else:
+            break
+
     print("prediction done with beta: " + str(beta))
 
 print("all predictions done")
 
-accuracy_table.to_csv(path_or_buf=r'../../../Data3/Hamid_ML4Science_ALE/SVMwithoutVar/accuracy_table_log_delta.csv')
+accuracy_table.to_csv(path_or_buf=r'../../../Data3/Hamid_ML4Science_ALE/SVMwithoutVar/accuracy_table_log_delta_allrange.csv')
 print("accuracy table delta band successfully saved")
