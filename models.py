@@ -6,6 +6,7 @@ from sklearn.preprocessing import StandardScaler
 from plots import *
 from helpers import *
 from sklearn.model_selection import GridSearchCV
+from sklearn.ensemble import RandomForestClassifier
 import pandas as pd
 
 # need to visualize the data -> if sparse no normalizing but scaling
@@ -90,6 +91,66 @@ def SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test, save_path='', C_
     # evaluation of the model
     test_accuracy = accuracy_score(y_test, pred)
 
+    # plot the results if save_fig = True
     plot_confusion_matrix(y_test, pred, accuracy=test_accuracy, save_fig=save_fig, title=title, save_path=save_path)
 
     return test_accuracy, best_C, best_gamma, best_kernel
+
+
+def RandomForest_predict(x_train, y_train, x_test, n_estimators=100, max_depth=None,
+                         min_samples_split=2, min_samples_leaf=1,
+                         n_jobs=5):
+    model = make_pipeline(StandardScaler(), RandomForestClassifier(n_estimators=n_estimators,
+                                                                   max_depth=max_depth, min_samples_split=min_samples_split,
+                                                                   min_samples_leaf=min_samples_leaf,
+                                                                   n_jobs=n_jobs, random_state=1))
+    model.fit(x_train, y_train)
+    # make predictions
+    y_pred_train = model.predict(x_train)
+    y_pred_test = model.predict(x_test)
+    # computation of accuracy
+    train_accuracy = accuracy_score(y_train, y_pred_train)
+
+    return y_pred_test, train_accuracy
+
+
+def RandomForest_tune_predict_evaluate(x_train, y_train, x_test, y_test, save_path='', n_estimators_params=[100, 500, 1000],
+                                       max_depth_params=[50, 100, 1000, None],
+                                       min_samples_split_params=[2, 5, 10], min_samples_leaf_params=[1, 2, 4],
+                                       n_jobs=5, save_fig=False,
+                                       title="confusion_matrix", grid_search=True, default_n_estimators=100,
+                                       default_max_depth=None, default_min_samples_split=2,
+                                       default_min_samples_leaf=1):
+
+    # TODO: is there more parameters to include in the grid search ???
+    if grid_search:
+        # grid search
+        params = {'n_estimators': n_estimators_params, 'max_depth': max_depth_params,
+                  'min_samples_split': min_samples_split_params, 'min_samples_leaf': min_samples_leaf_params}
+        grid_search = GridSearchCV(estimator=RandomForestClassifier(random_state=1), param_grid=params, cv=3, n_jobs=20, verbose=1)
+        grid_search.fit(x_train, y_train)
+        best_n_estimators = grid_search.best_params_["n_estimators"]
+        best_max_depth = grid_search.best_params_["max_depth"]
+        best_min_samples_split = grid_search.best_params_["min_samples_split"]
+        best_min_samples_leaf = grid_search.best_params_["min_samples_leaf"]
+        print("grid search done")
+
+    else:
+        best_n_estimators = default_n_estimators
+        best_max_depth = default_max_depth
+        best_min_samples_split = default_min_samples_split
+        best_min_samples_leaf = default_min_samples_leaf
+
+    # prediction
+    pred, train_accuracy = RandomForest_predict(x_train, y_train, x_test, n_estimators=best_n_estimators,
+                                                max_depth=best_max_depth,
+                                                min_samples_split=best_min_samples_split, min_samples_leaf=best_min_samples_leaf,
+                                                n_jobs=n_jobs)
+    print("predictions done")
+    # evaluation of the model
+    test_accuracy = accuracy_score(y_test, pred)
+
+    # plot the results if save_fig = True
+    plot_confusion_matrix(y_test, pred, accuracy=test_accuracy, save_fig=save_fig, title=title, save_path=save_path)
+
+    return test_accuracy, best_n_estimators, best_max_depth, best_min_samples_split, best_min_samples_leaf
