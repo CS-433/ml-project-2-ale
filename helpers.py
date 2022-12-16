@@ -8,35 +8,6 @@ from pathlib import Path
 import scipy.io
 
 
-def load_csv_data(data_path):
-    """
-    Loads data and returns final matrix with the features.
-
-    Arguments:
-        - data_path: the path of the data files in .csv
-
-    Returns:
-        - final_matrix
-        - y_labels
-    """
-    path = data_path  # use my path
-    all_files = Path(path).glob('*.csv')
-    print(all_files)
-    # all_files = glob.glob(os.path.join(path, "/*.csv"))
-
-    final_matrix = []
-    for filename in all_files:
-        line = readfile(filename)
-        final_matrix.append(line)
-
-    final_matrix = np.array(final_matrix)
-    # change to use the IDs as labels
-    # y_labels = np.arange(1, 49, 1)
-    y_labels = np.arange(1, 4, 1)
-
-    return final_matrix, y_labels
-
-
 def load_mat_file(filename):
     """
         loads a .mat file containing a structure RESULTS containing the matrix W generated from a learning graph script
@@ -81,6 +52,14 @@ def load_mat_file(filename):
 
 
 def create_set_epochs(data_set, w_sub_matrix, id):
+    """
+    Completes a given data set by adding a row with the vectorized upper triangular part of a given matrix as features
+    and given id as label. The data set can be empty, in this case it will be initialized with the row described above.
+    :param data_set: data set to be completed size (N,D)
+    :param w_sub_matrix: ndarray of size (D,D) or empty
+    :param id: ID of the patient corresponding to the W matrix
+    :return: The data set with a row added
+    """
     column_vector = read_matrix(w_sub_matrix)
     column_vector = np.insert(column_vector, 0, id)
     if data_set.size == 0:
@@ -91,6 +70,19 @@ def create_set_epochs(data_set, w_sub_matrix, id):
 
 
 def complete_final_data_set(final_data_set, temp_data_set, params, col_index):
+    """
+    Get a dataset from the final_data_set list at col_index and stacks the temp_data_set under it. The aim is to have
+    one data set per hyperparameter (params), one sample of each data set being one epoch from one patient. If the
+    final_data_set list is not yet of the right length (length of param), the temporary dataset is simply appended at
+    the end of the list.
+    :param final_data_set: a list of size M containing data sets of sizes (N,D)
+    :param temp_data_set: data set of size (n,D) to stack under a dataset of the list M. In our setting, each row of this
+    dataset is a sample (i.e ID of a person followed by features) and the temp_data_set contains all the epochs samples
+    from only one person
+    :param params: Hyper parameter of the learning graph, used to know the size of the final_data_set list
+    :param col_index: indicated under which element of the final_data_set list temp_data_set should be stacked
+    :return: The final_data_set list now completed with temp_data_set
+    """
     if len(final_data_set) < params.shape[0]:
         final_data_set.append(temp_data_set)
     else:
@@ -439,31 +431,34 @@ def load_data_set(band, regularization, type, parameter, epochs_combined=False, 
     return matrix, ids
 
 
-'''
-def average_all_epochs_per_setting(parameter, band, regularization, id, session):
-    #TODO
-    # get W matrices
-    # compute correlation
-    # rend un dataframe avec alpha, band, ID, session, reg, W matrix pour chaque setting (W is averaged over all epochs)
-'''
+def predict_with_correlation(band, reg, param, epochs_combined, path):
+    test_set, y_test = load_data_set(band=band, regularization=reg, parameter=param,
+                                            epochs_combined=epochs_combined, path=path, type="test")
+    train_set, y_train = load_data_set(band=band, regularization=reg, parameter=param,
+                                            epochs_combined=epochs_combined, path=path, type="train")
+    y_pred = []
+    for i in range(test_set.shape[0]):
+        max_correlation = -1
+        for j in range(train_set.shape[0]):
+            correlation = np.corrcoef(test_set[i, :], train_set[j, :])[0, 1]
+            if correlation >= max_correlation:
+                max_correlation = correlation
+                pred = y_train[j]
+        y_pred.append(pred)
+
+    return y_pred, y_test
 
 
+def compute_benchmark(band, reg, params, epochs_combined=False, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/'):
+    accuracy_table = pd.DataFrame(columns=['reg', 'band', 'alpha/beta', 'accuracy'])
+    for i, param in enumerate(params):
+        y_pred, y_true = predict_with_correlation(band, reg, param, epochs_combined, path)
+        accuracy = compute_accuracy(y_pred, y_true)
+        new_row = pd.Series(data={'reg': reg, 'band': band, 'alpha/beta': param, 'accuracy': accuracy}, name=i)
+        accuracy_table = accuracy_table.append(new_row, ignore_index=False)
+        print("accuracy for parameter: " + str(param) + " computed")
 
-def compute_inter_subj_correlations(train_matrix, test_matrices):
-    # test_matrices is a dictionary with ID and W matrix
-    # train matrix is one element of a dictionary with the matrix and its ID
-    # compare 1 subject test matrix in a specific setting to all train matrix
-    correlations = {}
-    train_matrix = np.squeeze(train_matrix.values()).flatten()
-    for id in test_matrices:
-        test_matrix = test_matrix[id].flatten()
-        correlation = np.corrcoef(train_matrix, test_matrix)
-        correlations[id] = correlation[0, 1]
-
-    pred_id = max(correlations, key=correlations.get)
-    real_id = train_matrix.keys()
-
-    return correlations, np.squeeze(pred_id), np.squeeze(real_id)
+    return accuracy_table
 
 
 def compute_accuracy(pred_ids, real_ids):
@@ -471,5 +466,3 @@ def compute_accuracy(pred_ids, real_ids):
     boolean_matrix = (pred_ids == real_ids)
     accuracy = np.sum(boolean_matrix)/len(pred_ids)
     return accuracy
-
-
