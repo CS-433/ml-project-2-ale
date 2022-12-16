@@ -14,13 +14,14 @@ print("starting predictions")
 for band in bands:
     print("starting predictions for: " + band)
     for j, beta in enumerate(betas):
-        x_train, y_train = load_data_set(band, reg, "train", beta, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/',
+        x_train, y_train = load_data_set(band, reg, "train", beta, path=r'../../../Data3/Hamid_ML4Science_ALE/data_sets/',
                                          epochs_combined=True)
-        x_test, y_test = load_data_set(band, reg, "test", beta, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/',
+        x_test, y_test = load_data_set(band, reg, "test", beta, path=r'../../../Data3/Hamid_ML4Science_ALE/data_sets/',
                                        epochs_combined=True)
+        x_train = remove_col_lowvariance(pd.DataFrame(x_train), 5 * 10 ** -6)
         title = "confusion_matrix_" + reg + "_" + band + "_" + str(beta) + '_all_epochs_combined'
         accuracy, C, gamma, kernel = SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test, save_fig=True, title=title,
-                                                               save_path=r'../../Data3/Hamid_ML4Science_ALE/plots/',
+                                                               save_path=r'../../Data3/Hamid_ML4Science_ALE/plots/withoutVar/',
                                                                grid_search=False)
         new_row = pd.Series(data={'reg': reg, 'band': band, 'alpha/beta': beta, 'C': C, 'gamma': gamma, 'kernel': kernel,
                                   'accuracy': accuracy}, name=j)
@@ -29,5 +30,5 @@ for band in bands:
 
 print("all predictions done")
 
-accuracy_table.to_csv(path_or_buf=r'../../Data3/Hamid_ML4Science_ALE/accuracy_table_log_all_epochs.csv')
+accuracy_table.to_csv(path_or_buf=r'../../Data3/Hamid_ML4Science_ALE/accuracywithoutVar_table_log_all_epochs.csv')
 print("accuracy table successfully saved")
