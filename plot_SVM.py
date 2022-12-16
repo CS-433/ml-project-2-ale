@@ -68,7 +68,9 @@ for band in bands:
                                                  epochs_combined=True)
         x_test, y_test = load_data_set(band, reg, "test", beta, path=r'../../../Data3/Hamid_ML4Science_ALE/data_sets/',
                                                epochs_combined=True)
+        print("Data loaded")
         best_thresh, accuracy_valid = validation(x_train, y_train,threshold_log_all)
+        print("Validation step done")
         x_train, x_test = remove_col_lowvariance(pd.DataFrame(x_train), pd.DataFrame(x_test), best_thresh)
         accuracy, C, gamma, kernel = SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test,
                                                                                    save_path=r'../../../Data3/Hamid_ML4Science_ALE/SVMwithoutVar/plots/',
@@ -80,7 +82,8 @@ for band in bands:
                                                                                    default_gamma='scale', default_kernel='rbf')
 
         new_row = pd.Series(data={'reg': reg, 'band': band, 'alpha/beta': beta, 'C': C, 'gamma': gamma, 'kernel': kernel,
-                                                      'accuracy_test': accuracy, 'accuracy_validation':accuracy_valid,'nb_features:': len(pd.DataFrame(x_train).columns)}, name=j)
+                                                     'accuracy_test': accuracy, 'accuracy_validation':accuracy_valid,'nb_features:': len(pd.DataFrame(x_train).columns)}, name=j)
+        print("test accuracy done")
         if band == 0:
             accuracy_table_al = accuracy_table_al.append(new_row, ignore_index=False)
         if band == 1:
