@@ -234,3 +234,123 @@ def plot_accuracies_all_settings_1band(path_tables, save_path, band, save_fig=Fa
         plt.savefig(save_path + title + ".png")
     plt.show()
 
+# function to make the two plot with all epochs combined
+def plot_sparsities_all_epochs(csv_files_path, save_path, save_fig=False):
+    path = csv_files_path
+    all_files = Path(path).glob('*.csv')
+
+    for file in all_files:
+        df = pd.read_csv(file)
+        name_of_file = os.path.basename(os.path.normpath(file))
+        title = name_of_file[:-4]
+        if "all_epochs" in title:
+            if 'l2' in title:
+                alphas = df.iloc[:, 0]
+                sparsity_alpha = df['alpha']
+                sparsity_beta = df['beta']
+                sparsity_delta = df['delta']
+                sparsity_gamma = df['gamma']
+                sparsity_theta = df['theta']
+
+                plt.plot(alphas, sparsity_alpha, label='alpha band')
+                plt.plot(alphas, sparsity_beta, label='beta band')
+                plt.plot(alphas, sparsity_delta, label='delta band')
+                plt.plot(alphas, sparsity_gamma, label='gamma band')
+                plt.plot(alphas, sparsity_theta, label='theta band')
+                plt.legend()
+
+                plt.title(title + ": plot")
+                plt.xlabel('alpha')
+                plt.ylabel('sparsity')
+                plt.xticks(alphas)
+                plt.xticks(rotation=90)
+                plt.grid(True)
+                plt.tight_layout()
+
+                if save_fig:
+                    plt.savefig(save_path + title + ".png")
+                else:
+                    plt.show()
+
+                plt.clf()
+
+            elif 'log' in title:
+                betas  = df.iloc[:, 0]
+                sparsity_alpha = df['alpha']
+                sparsity_beta = df['beta']
+                sparsity_delta = df['delta']
+                sparsity_gamma = df['gamma']
+                sparsity_theta = df['theta']
+
+                plt.plot(betas, sparsity_alpha, label='alpha band')
+                plt.plot(betas, sparsity_beta, label='beta band')
+                plt.plot(betas, sparsity_delta, label='delta band')
+                plt.plot(betas, sparsity_gamma, label='gamma band')
+                plt.plot(betas, sparsity_theta, label='theta band')
+                plt.legend()
+
+                plt.title(title + ": plot")
+                plt.xlabel('beta')
+                plt.ylabel('sparsity')
+                plt.xticks(betas)
+                plt.xticks(rotation=90)
+                plt.grid(True)
+                plt.tight_layout()
+
+                if save_fig:
+                    plt.savefig(save_path + title + ".png")
+                else:
+                    plt.show()
+
+    print("Done saving sparsity plots for all epochs")
+
+
+def plot_sparsities_per_epoch(csv_files_path, save_path, save_fig=False):
+    # function to make the 10 plots for each band with all 17 epochs each as a line
+    path = csv_files_path
+    all_files = Path(path).glob('*.csv')
+
+    for file in all_files:
+        df = pd.read_csv(file)
+        name_of_file = os.path.basename(os.path.normpath(file))
+        title = name_of_file[:-4]
+        if 'l2' in title:
+            alphas = df.iloc[:, 0]
+            for epoch in np.linspace(1,17,17):
+                plt.plot(alphas, df.iloc[:, int(epoch)], linewidth=0.1)
+
+            plt.title(title + ": plot")
+            plt.xlabel('alpha')
+            plt.ylabel('sparsity')
+            plt.xticks(alphas)
+            plt.xticks(rotation=90)
+            plt.grid(True)
+            plt.tight_layout()
+
+            if save_fig:
+                plt.savefig(save_path + title + ".png")
+            else:
+                plt.show()
+
+            plt.clf()
+
+        elif 'log' in title:
+            betas = df.iloc[:, 0]
+            for epoch in np.linspace(1, 17, 17):
+                plt.plot(betas, df.iloc[:, int(epoch)], linewidth=0.1)
+
+            plt.title(title + ": plot")
+            plt.xlabel('beta')
+            plt.ylabel('sparsity')
+            plt.xticks(betas)
+            plt.xticks(rotation=90)
+            plt.grid(True)
+            plt.tight_layout()
+
+            if save_fig:
+                plt.savefig(save_path + title + ".png")
+            else:
+                plt.show()
+        plt.clf()
+
+    print("Done saving sparsity plots per epochs")
