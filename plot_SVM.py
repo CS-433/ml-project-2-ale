@@ -4,31 +4,27 @@
 # -> run on all band at the same time on a given regularisation/C/... and a range of threshold
 
 from models import *
-from sklearn.model_selection import KFold
-def validation(train_setx,train_sety, threshold):
-    kf = KFold(n_splits=5)
-    KFold(random_state=None, shuffle=False)
+from sklearn.model_selection import cross_validate
+from sklearn.svm import SVC
+def validation(train_setx,train_sety, test_setx,threshold, best_C, best_kernel, best_gamma):
+
     best_threshh=0.0
     accuracyy=0.0
+    _scoring = ['accuracy']
     for ind, T in enumerate(threshold):
-        for i, (train_index, test_index) in enumerate(kf.split(train_setx)):
-            valid_trainx=train_setx[train_index]
-            valid_trainy=train_sety[train_index]
-            valid_testx=train_setx[test_index]
-            valid_testy=train_sety[test_index]
-            x_train, x_test = remove_col_lowvariance(pd.DataFrame(valid_trainx), pd.DataFrame(valid_testx), T)
-            accuracy, C, gamma, kernel = SVM_tune_predict_evaluate(x_train, valid_trainy, x_test, valid_testy,
-                                                                   save_path=r'../../../Data3/Hamid_ML4Science_ALE/SVMwithoutVar/plots/',
-                                                                   C_params=[0.1, 1, 10, 100],
-                                                                   gamma_params=[10, 1, 0.1, 0.01, 0.001, 'scale'],
-                                                                   kernel_params=['rbf', 'sigmoid'],
-                                                                   save_fig=False, title="confusion_matrix",
-                                                                   grid_search=False, default_C=1,
-                                                                   default_gamma='scale', default_kernel='rbf')
-            if accuracy>accuracyy:
-                best_threshh = T
-                accuracyy=accuracy
+        x_train, x_test = remove_col_lowvariance(pd.DataFrame(train_setx), pd.DataFrame(test_setx), T)
 
+        result = cross_validate(estimator=SVC(C=best_C, gamma=best_gamma, kernel= best_kernel),
+                             X=x_train,
+                             y=train_sety,
+                             cv=5,
+                             scoring=_scoring,
+                             return_train_score=True,
+                             n_jobs=20)
+
+        if result['test_accuracy'].mean()>accuracyy:
+            best_threshh = T
+            accuracyy=result['test_accuracy'].mean()
     return best_threshh, accuracyy
 
 
@@ -48,14 +44,15 @@ threshold_log= np.linspace(0.00023, 0.00073, 20, endpoint=True)
 bands = ["alpha", "beta", "delta", "gamma", "theta"]
 
 reg = "wlog"
-#reg = "wl2"
-accuracy_f=0.0
 
-accuracy_table_al = pd.DataFrame(columns=['reg', 'band', 'alpha/beta', 'C', 'gamma', 'kernel', 'accuracy'])
-accuracy_table_be = pd.DataFrame(columns=['reg', 'band', 'alpha/beta', 'C', 'gamma', 'kernel', 'accuracy'])
-accuracy_table_de = pd.DataFrame(columns=['reg', 'band', 'alpha/beta', 'C', 'gamma', 'kernel', 'accuracy'])
-accuracy_table_ga = pd.DataFrame(columns=['reg', 'band', 'alpha/beta', 'C', 'gamma', 'kernel', 'accuracy'])
-accuracy_table_th = pd.DataFrame(columns=['reg', 'band', 'alpha/beta', 'C', 'gamma', 'kernel', 'accuracy'])
+#reg = "wl2"
+
+
+accuracy_table_al = pd.DataFrame(columns=['reg', 'band', 'alpha/beta', 'C', 'gamma', 'kernel', 'accuracy_test', 'accuracy_validation', 'nb_features'])
+accuracy_table_be = pd.DataFrame(columns=['reg', 'band', 'alpha/beta', 'C', 'gamma', 'kernel', 'accuracy_test', 'accuracy_validation', 'nb_features'])
+accuracy_table_de = pd.DataFrame(columns=['reg', 'band', 'alpha/beta', 'C', 'gamma', 'kernel', 'accuracy_test', 'accuracy_validation', 'nb_features'])
+accuracy_table_ga = pd.DataFrame(columns=['reg', 'band', 'alpha/beta', 'C', 'gamma', 'kernel', 'accuracy_test', 'accuracy_validation', 'nb_features'])
+accuracy_table_th = pd.DataFrame(columns=['reg', 'band', 'alpha/beta', 'C', 'gamma', 'kernel', 'accuracy_test', 'accuracy_validation', 'nb_features'])
 
 
 print("starting predictions")
@@ -69,7 +66,7 @@ for band in bands:
         x_test, y_test = load_data_set(band, reg, "test", beta, path=r'../../../Data3/Hamid_ML4Science_ALE/data_sets/',
                                                epochs_combined=True)
         print("Data loaded")
-        best_thresh, accuracy_valid = validation(x_train, y_train,threshold_log_all)
+        best_thresh, accuracy_valid = validation(x_train,y_train, x_test,threshold_log_all, best_C, best_kernel, best_gamma)
         print("Validation step done")
         x_train, x_test = remove_col_lowvariance(pd.DataFrame(x_train), pd.DataFrame(x_test), best_thresh)
         accuracy, C, gamma, kernel = SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test,
@@ -82,7 +79,7 @@ for band in bands:
                                                                                    default_gamma='scale', default_kernel='rbf')
 
         new_row = pd.Series(data={'reg': reg, 'band': band, 'alpha/beta': beta, 'C': C, 'gamma': gamma, 'kernel': kernel,
-                                                     'accuracy_test': accuracy, 'accuracy_validation':accuracy_valid,'nb_features:': len(pd.DataFrame(x_train).columns)}, name=j)
+                                                     'accuracy_test': accuracy, 'accuracy_validation':accuracy_valid,'nb_features': len(pd.DataFrame(x_train).columns)}, name=j)
         print("test accuracy done")
         if band == 0:
             accuracy_table_al = accuracy_table_al.append(new_row, ignore_index=False)
@@ -95,7 +92,7 @@ for band in bands:
         if band == 4:
             accuracy_table_th = accuracy_table_th.append(new_row, ignore_index=False)
 
-    print("prediction done with beta: " + str(beta))
+        print("prediction done with beta: " + str(beta))
 
 print("all predictions done")
 
@@ -106,3 +103,29 @@ accuracy_table_ga.to_csv(path_or_buf=r'../../../Data3/Hamid_ML4Science_ALE/SVMwi
 accuracy_table_th.to_csv(path_or_buf=r'../../../Data3/Hamid_ML4Science_ALE/SVMwithoutVar/Final_results/accuracywithoutVar_table_log_all_epochs_theta.csv')
 
 print("accuracy table successfully saved")
+
+print('Plotting...')
+
+t = betas
+a = accuracy_table_al.loc[:,"accuracy_test"]
+
+b = accuracy_table_be.loc[:,"accuracy_test"]
+c = accuracy_table_de.loc[:,"accuracy_test"]
+d = accuracy_table_ga.loc[:,"accuracy_test"]
+e = accuracy_table_th.loc[:,"accuracy_test"]
+
+plt.plot(t, a,label='alpha')
+plt.plot(t, b, label='beta')
+plt.plot(t, c, label='delta')
+plt.plot(t, d, label='gamma')
+plt.plot(t, e , label = 'theta')
+plt.legend()
+plt.xlabel('learning graph parameter')
+plt.ylabel('accuracy')
+title='SVM_'+ str(reg)+'_all_epochs_'+'accuracies'
+plt.title(title)
+
+
+plt.grid()
+plt.savefig(r'../../../Data3/Hamid_ML4Science_ALE/SVMwithoutVar/Final_results/' + title + ".png")
+plt.show()
