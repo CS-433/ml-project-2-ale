@@ -140,7 +140,7 @@ def find_labels(filename):
 
 
 def plot_accuracies_wrt_parameter(path_tables, save_path, model_name, regularization, save_fig=False,
-                                  y_scale=np.linspace(0, 1, 21, endpoint=True)):
+                                  y_scale=np.linspace(0, 1, 21, endpoint=True), all_epochs=False):
     path = path_tables
     all_files = Path(path).glob('*.csv')
     params = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499999999999999, 0.7, 0.75, 0.8,
@@ -154,7 +154,20 @@ def plot_accuracies_wrt_parameter(path_tables, save_path, model_name, regulariza
         name_of_file = name_of_file[:-4]
         condition = "all_epochs" in name_of_file
         title = model_name + "_" + regularization + "_accuracies"
-        if not condition:
+        if not condition and not all_epochs:
+            if regularization in name_of_file:
+                plt.plot(x, y, label=find_labels(name_of_file))
+                plt.legend()
+                plt.title(title)
+                plt.legend()
+                plt.ylabel('accuracy')
+                plt.xlabel('learning graph parameter')
+                plt.xticks(params)
+                plt.xticks(rotation=90)
+                plt.yticks(y_scale)
+                plt.grid(True)
+                plt.tight_layout()
+        elif condition and all_epochs:
             if regularization in name_of_file:
                 plt.plot(x, y, label=find_labels(name_of_file))
                 plt.legend()
@@ -187,7 +200,7 @@ def best_accuracies_df_all_epochs(params, dataframe):
     return new_accuracy_table
 
 
-def plot_accuracies_wrt_parameter_all_epochs(path_tables, save_path, model_name, regularization, save_fig=False,
+def plot_accuracies_wrt_parameter_from1file(path_tables, save_path, model_name, regularization, save_fig=False,
                                              y_scale=np.linspace(0, 1, 21, endpoint=True)):
     path = path_tables
     all_files = Path(path).glob('*.csv')
@@ -226,7 +239,7 @@ def plot_accuracies_wrt_parameter_all_epochs(path_tables, save_path, model_name,
                 plt.plot(params, theta_accuracy, label='theta')
                 plt.legend()
 
-                plt.title(title + ": plot")
+                plt.title(title)
                 plt.xlabel('learning graph parameter')
                 plt.ylabel('accuracy')
                 plt.xticks(params)
