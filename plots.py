@@ -47,9 +47,9 @@ def find_band_labels(filename):
 def find_reg_labels(filename):
     if "correlations" in filename:
         if "l2" in filename:
-            return "dashed", "benchmark l2"
+            return "dashed", "correlation l2"
         elif "log" in filename:
-            return "dotted", "benchmark log"
+            return "dotted", "correlation log"
     else:
         if "l2" in filename:
             return "solid", "RandomForest l2"
@@ -109,27 +109,21 @@ def plot_accuracies_wrt_parameter(path_tables, save_path, model_name, regulariza
         if not condition and not all_epochs:
             if regularization in name_of_file:
                 plt.plot(x, y, label=find_band_labels(name_of_file))
-                plt.legend()
-                plt.title(title)
-                plt.legend()
-                plt.ylabel('accuracy')
-                plt.xlabel('learning graph parameter')
-                plt.xticks(params)
-                plt.xticks(rotation=90)
-                plt.yticks(y_scale)
+                plt.legend(fontsize=13)
+                plt.ylabel('accuracy', fontsize=25)
+                plt.xlabel('learning graph parameter', fontsize=25)
+                plt.xticks(params, rotation=90, fontsize=15)
+                plt.yticks(y_scale, fontsize=15)
                 plt.grid(True)
                 plt.tight_layout()
         elif condition and all_epochs:
             if regularization in name_of_file:
-                plt.plot(x, y, label=find_labels(name_of_file))
-                plt.legend()
-                plt.title(title)
-                plt.legend()
-                plt.ylabel('accuracy')
-                plt.xlabel('learning graph parameter')
-                plt.xticks(params)
-                plt.xticks(rotation=90)
-                plt.yticks(y_scale)
+                plt.plot(x, y, label=find_band_labels(name_of_file))
+                plt.legend(fontsize=12)
+                plt.ylabel('accuracy', fontsize=25)
+                plt.xlabel('learning graph parameter', fontsize=25)
+                plt.xticks(params, rotation=90, fontsize=15)
+                plt.yticks(y_scale, fontsize=15)
                 plt.grid(True)
                 plt.tight_layout()
     if save_fig:
@@ -188,14 +182,11 @@ def plot_accuracies_wrt_parameter_from1file(path_tables, save_path, model_name, 
                 plt.plot(params, delta_accuracy, label='delta')
                 plt.plot(params, gamma_accuracy, label='gamma')
                 plt.plot(params, theta_accuracy, label='theta')
-                plt.legend()
-
-                plt.title(title)
-                plt.xlabel('learning graph parameter')
-                plt.ylabel('accuracy')
-                plt.xticks(params)
-                plt.xticks(rotation=90)
-                plt.yticks(y_scale)
+                plt.legend(fontsize=12)
+                plt.ylabel('accuracy', fontsize=25)
+                plt.xlabel('learning graph parameter', fontsize=25)
+                plt.xticks(params, rotation=90, fontsize=15)
+                plt.yticks(y_scale, fontsize=15)
                 plt.grid(True)
                 plt.tight_layout()
                 if save_fig:
@@ -215,18 +206,16 @@ def plot_accuracies_all_settings_1band(path_tables, save_path, band, save_fig=Fa
         condition = "all_epochs" in name_of_file
         title = band + "_all_settings_accuracies"
         if band in name_of_file and not condition:
-            print(name_of_file)
             df = pd.read_csv(file)
             x = df["alpha/beta"]
             y = df["accuracy"]
             linestyle, label = find_reg_labels(name_of_file)
             plt.plot(x, y, label=label, linestyle=find_line_style(name_of_file), color=find_line_color(name_of_file))
-            plt.legend()
-            plt.title(title)
-            plt.ylabel('accuracy')
-            plt.xlabel('learning graph parameter')
-            plt.xticks(params, rotation=90)
-            plt.yticks(y_scale)
+            plt.legend(fontsize=12)
+            plt.ylabel('accuracy', fontsize=25)
+            plt.xlabel('learning graph parameter', fontsize=25)
+            plt.xticks(params, rotation=90, fontsize=15)
+            plt.yticks(y_scale, fontsize=15)
             plt.grid(True)
             plt.tight_layout()
 
