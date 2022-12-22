@@ -15,8 +15,8 @@ accuracy_table = pd.DataFrame(columns=['reg', 'band', 'alpha/beta', 'C', 'gamma'
 print("starting predictions")
 
 for j, spar in enumerate(sparsity_parameters):
-    x_train, y_train = load_data_set(band, reg, "train", spar, path=r'Train_set')
-    x_test, y_test = load_data_set(band, reg, "test", spar, path=r'Test_set')
+    x_train, y_train = load_data_set(band, reg, "train", spar, path=r'data_sets/Train_set')
+    x_test, y_test = load_data_set(band, reg, "test", spar, path=r'data_sets/Test_set')
     for indice, value in enumerate(threshold):
 
         x_train, x_test = remove_col_lowvariance(pd.DataFrame(x_train), pd.DataFrame(x_test), value)

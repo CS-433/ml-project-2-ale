@@ -7,7 +7,7 @@ params = [0.05, 0.1, 0.15000000000000002, 0.2, 0.25, 0.3, 0.35000000000000003, 0
 print("starting predictions for regularization: " + reg)
 for band in bands:
     file_name = "accuracy_table_correlations_all_epochs_" + reg + "_" + band + ".csv"
-    save_path = r'../../Data3/Hamid_ML4Science_ALE/correlations/' + file_name
+    save_path = r'../results/correlations' + file_name
     print("starting predictions for band " + band + " and regularization " + reg)
     accuracies = compute_benchmark(band, reg, params, epochs_combined=True,
                                    path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/')

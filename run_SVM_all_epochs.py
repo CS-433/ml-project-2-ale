@@ -18,9 +18,9 @@ for band in bands:
     print("starting predictions for: " + band)
     for j, spar in enumerate(sparsity_parameters):
         for indice, value in enumerate(threshold):
-            x_train, y_train = load_data_set(band, reg, "train", spar, path=r'Train_set/',
+            x_train, y_train = load_data_set(band, reg, "train", spar, path=r'data_sets/Train_set/',
                                              epochs_combined=True)
-            x_test, y_test = load_data_set(band, reg, "test", spar, path=r'Test_set/',
+            x_test, y_test = load_data_set(band, reg, "test", spar, path=r'data_sets/Test_set/',
                                            epochs_combined=True)
             x_train, x_test = remove_col_lowvariance(pd.DataFrame(x_train), pd.DataFrame(x_test), value)
             title = "confusion_matrix_" + reg + "_" + band + "_" + str(spar) + +"_" + str(value)+'_all_epochs_combined'

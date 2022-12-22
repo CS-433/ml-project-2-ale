@@ -26,10 +26,10 @@ for band in bands:
     for j, spar in enumerate(sparsity_parameters):
 
 
-        x_train, y_train = load_data_set(band, reg, "train", spar, path=r'Train_set/',
-                                                 epochs_combined=False)
-        x_test, y_test = load_data_set(band, reg, "test", beta, path=r'Test_set/',
-                                               epochs_combined=False)
+        x_train, y_train = load_data_set(band, reg, "train", spar, path=r'data_sets/Train_set/',
+                                         epochs_combined=False)
+        x_test, y_test = load_data_set(band, reg, "test", beta, path=r'data_sets/Test_set/',
+                                       epochs_combined=False)
         print("Data loaded")
         best_thresh, accuracy_valid = validation_SVM(x_train,y_train, x_test,threshold_l2, 10, 'sigmoid', 'scale')
         print("Validation step done")
