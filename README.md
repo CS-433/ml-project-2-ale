@@ -80,7 +80,8 @@ Python files:
 filename                        | description
 --------------------------------|------------------------------------------
 create_datasets.py              |
-helpers.py                      |Set of useful functions used throughout the project
+create_accuracy_plots.py	    | This file creates different plots of the best accuracy of our models with regards to each of the learned graph sparsity                                             parameters. To run it without modifying the paths the .csv results files need to be stored in the folders at the following path                                     starting from this repository: SVM results: ../SVM, RandomForest results: ../results/RandomForest, correlation results:                                             ../results/correlations. 
+helpers.py                      | Set of useful functions used throughout the project
 plots.py                        |
 models.py                       |
 run_Random_Forest.py            |
