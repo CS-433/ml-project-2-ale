@@ -317,6 +317,15 @@ def create_all_sets(data_path, save_file=True, verbose=True, last_epoch=False,
 
 
 def read_matrix(matrix, size_of_matrix=148):
+    """
+        This functions reads a matrix that is assumed to be symmetrical and therefore squared. It isolates the upper
+        triangular matrix without the diagonal and flattens it into a 1-dimensional array
+
+        :param matrix: said matrix to be read
+        :param size_of_matrix: size of matrix that is squared. The default is 148 as this is the standard size
+               of our matrices in this project.
+        :return: upper_upper_triangular_matrix_vector
+    """
     x = np.reshape(matrix, (size_of_matrix, size_of_matrix))
     indices_upper_triangular = np.triu_indices(size_of_matrix, 1)
     upper_triangular_matrix_vector = x[indices_upper_triangular]
@@ -341,13 +350,13 @@ def remove_col_lowvariance(datafrx, datafr_test, threshold):
     Args:
         datafr: a pandas DataFrame containing the train data
         datafr_test: a pandas DataFrame containing the test data
-        threshold: a numerical value that sets the variance threshold below which the columns with lower variance will be removed  
+        threshold: a numerical value that sets the variance threshold below which the columns with lower variance will be removed
 
     Returns: a DataFrame without the columns with variance below the threshold
 
     """
     variance = datafrx.var()
-    
+
     dico = dict(list(enumerate(variance)))
 
     selected_col = [key for key, value in dico.items()
@@ -552,6 +561,15 @@ def compute_accuracy(pred_ids, real_ids):
 
 # function to create the two CSVs with sparsity values for all epochs
 def save_sparsities_all_epochs(data_path, save_path):
+    """
+            This functions loads all the CSVs containing the sparsity of matrices that were build using all_epochs
+            data. It does it separately for the l2 and the log regularization. It stacks all those CSVs together
+
+            :param matrix: said matrix to be read
+            :param size_of_matrix: size of matrix that is squared. The default is 148 as this is the standard size
+                   of our matrices in this project.
+            :return: upper_upper_triangular_matrix_vector
+        """
     sparsity_all_epochs_alpha_l2, sparsity_all_epochs_alpha_log, sparsity_all_epochs_beta_l2, sparsity_all_epochs_beta_log, \
     sparsity_all_epochs_delta_l2, sparsity_all_epochs_delta_log, sparsity_all_epochs_gamma_l2, sparsity_all_epochs_gamma_log, \
     sparsity_all_epochs_theta_l2, sparsity_all_epochs_theta_log = get_sparsities_all_epochs(data_path)
@@ -579,8 +597,14 @@ def save_sparsities_all_epochs(data_path, save_path):
     print("Done saving sparsity CSV files for all epochs")
 
 
-# function to compute the sparsity of one matrix
 def compute_sparsity(matrix):
+    """
+    This functions computes the sparsity of one matrix. The sparsity is computed as the number of values inferior
+    to 5% of the max value of the matrix divided by the total number of elements
+
+    :param matrix: matrix whose sparsity will be computed
+    :return: sparsity: a value between 0 and 1 that represents the sparsity of the matrix
+    """
     number_of_elements = matrix.shape[0]*matrix.shape[1]
     max_value = matrix.max()
     threshold = 0.05*max_value
@@ -766,16 +790,16 @@ def compute_sparsities_per_epoch(data_path):
     files = glob.glob(path, recursive=True)
 
     # third dimension should be 84*2 on final data but 3 on the test
-    matrix_alpha_l2 = np.zeros((20, 17, 168))
-    matrix_alpha_log = np.zeros((20, 17, 168))
-    matrix_beta_l2 = np.zeros((20, 17, 168))
-    matrix_beta_log = np.zeros((20, 17, 168))
-    matrix_delta_l2 = np.zeros((20, 17, 168))
-    matrix_delta_log = np.zeros((20, 17, 168))
-    matrix_gamma_l2 = np.zeros((20, 17, 168))
-    matrix_gamma_log = np.zeros((20, 17, 168))
-    matrix_theta_l2 = np.zeros((20, 17, 168))
-    matrix_theta_log = np.zeros((20, 17, 168))
+    matrix_alpha_l2 = np.zeros((20, 20, 168))
+    matrix_alpha_log = np.zeros((20, 20, 168))
+    matrix_beta_l2 = np.zeros((20, 20, 168))
+    matrix_beta_log = np.zeros((20, 20, 168))
+    matrix_delta_l2 = np.zeros((20, 20, 168))
+    matrix_delta_log = np.zeros((20, 20, 168))
+    matrix_gamma_l2 = np.zeros((20, 20, 168))
+    matrix_gamma_log = np.zeros((20, 20, 168))
+    matrix_theta_l2 = np.zeros((20, 20, 168))
+    matrix_theta_log = np.zeros((20, 20, 168))
 
     count_alpha = 0
     count_beta = 0
@@ -803,7 +827,7 @@ def compute_sparsities_per_epoch(data_path):
                 line_of_epochs_l2 = []
                 # here the range is not fixed to size_wl2[3]-1 because not all people have the same
                 # number of epochs --> the min value is 17 so we will stop there
-                for epoch in range(17):
+                for epoch in range(20):
                     matrix = wl2[:, :, alpha, epoch]
                     sparsity = compute_sparsity(matrix)
                     line_of_epochs_l2.append(sparsity)
@@ -819,7 +843,7 @@ def compute_sparsities_per_epoch(data_path):
 
             for i, beta in enumerate(betas):
                 line_of_epochs_log = []
-                for epoch in range(17):
+                for epoch in range(20):
                     matrix = wlog[:, :, i, epoch]
                     sparsity = compute_sparsity(matrix)
                     line_of_epochs_log.append(sparsity)
@@ -838,7 +862,7 @@ def compute_sparsities_per_epoch(data_path):
                 line_of_epochs_l2 = []
                 # here the range is not fixed to size_wl2[3]-1 because not all people have the same
                 # number of epochs --> the min value is 17 so we will stop there
-                for epoch in range(17):
+                for epoch in range(20):
                     matrix = wl2[:, :, i, epoch]
                     sparsity = compute_sparsity(matrix)
                     line_of_epochs_l2.append(sparsity)
@@ -852,7 +876,7 @@ def compute_sparsities_per_epoch(data_path):
 
             for i, beta in enumerate(betas):
                 line_of_epochs_log = []
-                for epoch in range(17):
+                for epoch in range(20):
                     matrix = wlog[:, :, i, epoch]
                     sparsity = compute_sparsity(matrix)
                     line_of_epochs_log.append(sparsity)
@@ -870,7 +894,7 @@ def compute_sparsities_per_epoch(data_path):
                 line_of_epochs_l2 = []
                 # here the range is not fixed to size_wl2[3]-1 because not all people have the same
                 # number of epochs --> the min value is 17 so we will stop there
-                for epoch in range(17):
+                for epoch in range(20):
                     matrix = wl2[:, :, i, epoch]
                     sparsity = compute_sparsity(matrix)
                     line_of_epochs_l2.append(sparsity)
@@ -884,7 +908,7 @@ def compute_sparsities_per_epoch(data_path):
 
             for i, beta in enumerate(betas):
                 line_of_epochs_log = []
-                for epoch in range(17):
+                for epoch in range(20):
                     matrix = wlog[:, :, i, epoch]
                     sparsity = compute_sparsity(matrix)
                     line_of_epochs_log.append(sparsity)
@@ -902,7 +926,7 @@ def compute_sparsities_per_epoch(data_path):
                 line_of_epochs_l2 = []
                 # here the range is not fixed to size_wl2[3]-1 because not all people have the same
                 # number of epochs --> the min value is 17 so we will stop there
-                for epoch in range(17):
+                for epoch in range(20):
                     matrix = wl2[:, :, i, epoch]
                     sparsity = compute_sparsity(matrix)
                     line_of_epochs_l2.append(sparsity)
@@ -915,7 +939,7 @@ def compute_sparsities_per_epoch(data_path):
             matrix_gamma_l2[:, :, count_gamma] = epoch_matrix_gamma_l2
             for i, beta in enumerate(betas):
                 line_of_epochs_log = []
-                for epoch in range(17):
+                for epoch in range(20):
                     matrix = wlog[:, :, i, epoch]
                     sparsity = compute_sparsity(matrix)
                     line_of_epochs_log.append(sparsity)
@@ -933,7 +957,7 @@ def compute_sparsities_per_epoch(data_path):
                 line_of_epochs_l2 = []
                 # here the range is not fixed to size_wl2[3]-1 because not all people have the same
                 # number of epochs --> the min value is 17 so we will stop there
-                for epoch in range(17):
+                for epoch in range(20):
                     matrix = wl2[:, :, i, epoch]
                     sparsity = compute_sparsity(matrix)
                     line_of_epochs_l2.append(sparsity)
@@ -946,7 +970,7 @@ def compute_sparsities_per_epoch(data_path):
             matrix_theta_l2[:, :, count_theta] = epoch_matrix_theta_l2
             for i, beta in enumerate(betas):
                 line_of_epochs_log = []
-                for epoch in range(17):
+                for epoch in range(20):
                     matrix = wlog[:, :, i, epoch]
                     sparsity = compute_sparsity(matrix)
                     line_of_epochs_log.append(sparsity)
@@ -981,34 +1005,34 @@ def save_sparsities_each_epochs(data_path, save_path):
 
     alpha_band_l2_sparsities_df = pd.DataFrame(data=matrix_alpha_l2, index=['0.05', '0.1', '0.15', '0.20', '0.25', '0.3', '0.35', '0.4', '0.45',
                                                         '0.5', '0.55', '0.6', '0.65', '0.7', '0.75', '0.8', '0.85', '0.9', '0.95', '1'],
-                                               columns=[np.linspace(1,17,17)])
+                                               columns=[np.linspace(1,20,20)])
     alpha_band_log_sparsities_df = pd.DataFrame(data=matrix_alpha_log, index=['0.05', '0.1', '0.15', '0.20', '0.25', '0.3', '0.35', '0.4', '0.45',
                                                         '0.5', '0.55', '0.6', '0.65', '0.7', '0.75', '0.8', '0.85', '0.9', '0.95', '1'],
-                                                columns=[np.linspace(1,17,17)])
+                                                columns=[np.linspace(1,20,20)])
     beta_band_l2_sparsities_df = pd.DataFrame(data=matrix_beta_l2, index=['0.05', '0.1', '0.15', '0.20', '0.25', '0.3', '0.35', '0.4', '0.45',
                                                         '0.5', '0.55', '0.6', '0.65', '0.7', '0.75', '0.8', '0.85', '0.9', '0.95', '1'],
-                                              columns=[np.linspace(1,17,17)])
+                                              columns=[np.linspace(1,20,20)])
     beta_band_log_sparsities_df = pd.DataFrame(data=matrix_beta_log, index=['0.05', '0.1', '0.15', '0.20', '0.25', '0.3', '0.35', '0.4', '0.45',
                                                         '0.5', '0.55', '0.6', '0.65', '0.7', '0.75', '0.8', '0.85', '0.9', '0.95', '1'],
-                                               columns=[np.linspace(1,17,17)])
+                                               columns=[np.linspace(1,20,20)])
     delta_band_l2_sparsities_df = pd.DataFrame(data=matrix_delta_l2, index=['0.05', '0.1', '0.15', '0.20', '0.25', '0.3', '0.35', '0.4', '0.45',
                                                         '0.5', '0.55', '0.6', '0.65', '0.7', '0.75', '0.8', '0.85', '0.9', '0.95', '1'],
-                                               columns=[np.linspace(1,17,17)])
+                                               columns=[np.linspace(1,20,20)])
     delta_band_log_sparsities_df = pd.DataFrame(data=matrix_delta_log, index=['0.05', '0.1', '0.15', '0.20', '0.25', '0.3', '0.35', '0.4', '0.45',
                                                         '0.5', '0.55', '0.6', '0.65', '0.7', '0.75', '0.8', '0.85', '0.9', '0.95', '1'],
-                                                columns=[np.linspace(1,17,17)])
+                                                columns=[np.linspace(1,20,20)])
     gamma_band_l2_sparsities_df = pd.DataFrame(data=matrix_gamma_l2, index=['0.05', '0.1', '0.15', '0.20', '0.25', '0.3', '0.35', '0.4', '0.45',
                                                         '0.5', '0.55', '0.6', '0.65', '0.7', '0.75', '0.8', '0.85', '0.9', '0.95', '1'],
-                                               columns=[np.linspace(1,17,17)])
+                                               columns=[np.linspace(1,20,20)])
     gamma_band_log_sparsities_df = pd.DataFrame(data=matrix_gamma_log, index=['0.05', '0.1', '0.15', '0.20', '0.25', '0.3', '0.35', '0.4', '0.45',
                                                         '0.5', '0.55', '0.6', '0.65', '0.7', '0.75', '0.8', '0.85', '0.9', '0.95', '1'],
-                                               columns=[np.linspace(1,17,17)])
+                                               columns=[np.linspace(1,20,20)])
     theta_band_l2_sparsities_df = pd.DataFrame(data=matrix_theta_l2, index=['0.05', '0.1', '0.15', '0.20', '0.25', '0.3', '0.35', '0.4', '0.45',
                                                         '0.5', '0.55', '0.6', '0.65', '0.7', '0.75', '0.8', '0.85', '0.9', '0.95', '1'],
-                                               columns=[np.linspace(1,17,17)])
+                                               columns=[np.linspace(1,20,20)])
     theta_band_log_sparsities_df = pd.DataFrame(data=matrix_theta_log, index=['0.05', '0.1', '0.15', '0.20', '0.25', '0.3', '0.35', '0.4', '0.45',
                                                         '0.5', '0.55', '0.6', '0.65', '0.7', '0.75', '0.8', '0.85', '0.9', '0.95', '1'],
-                                               columns=[np.linspace(1,17,17)])
+                                               columns=[np.linspace(1,20,20)])
 
     alpha_band_l2_sparsities_df.to_csv(save_path + 'sparsities_alpha_band_l2.csv')
     alpha_band_log_sparsities_df.to_csv(save_path + 'sparsities_alpha_band_log.csv')
