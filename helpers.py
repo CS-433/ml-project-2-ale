@@ -562,14 +562,18 @@ def compute_accuracy(pred_ids, real_ids):
 # function to create the two CSVs with sparsity values for all epochs
 def save_sparsities_all_epochs(data_path, save_path):
     """
-            This functions loads all the CSVs containing the sparsity of matrices that were build using all_epochs
-            data. It does it separately for the l2 and the log regularization. It stacks all those CSVs together
+    This functions saves the sparsity matrices built in the compute_sparsities_all_epoch. It first calls this
+    function to retrieve the 10 vectors. For each regularization it then vstacks the frequency bands such that we
+    have one matrix with each row representing a frequency band and the columns representing the sparsity parameter
+    value. It then transposes it so that the sparsity values are on the rows. It then creates two CSV files, one
+    for log-regularization and one for l2-regularization. These CSV files have a first row that specifies which
+    frequency bands those values are from and an index column that specifies the sparsity paarmeter value. There is
+    no return as it simply saves the CSV files.
 
-            :param matrix: said matrix to be read
-            :param size_of_matrix: size of matrix that is squared. The default is 148 as this is the standard size
-                   of our matrices in this project.
-            :return: upper_upper_triangular_matrix_vector
-        """
+    :param data_path: path of where all the .mat files are saved which are obtained from the MATLAB script.
+    :param save_path: path were the 10 CSVs will be saved
+     """
+
     sparsity_all_epochs_alpha_l2, sparsity_all_epochs_alpha_log, sparsity_all_epochs_beta_l2, sparsity_all_epochs_beta_log, \
     sparsity_all_epochs_delta_l2, sparsity_all_epochs_delta_log, sparsity_all_epochs_gamma_l2, sparsity_all_epochs_gamma_log, \
     sparsity_all_epochs_theta_l2, sparsity_all_epochs_theta_log = get_sparsities_all_epochs(data_path)
@@ -616,21 +620,31 @@ def compute_sparsity(matrix):
 
 # function to compute the sparsities for all epochs
 def get_sparsities_all_epochs(data_path):
+    """
+        This functions computes the  average sparsity over all subjects for the matrix that was obtained when learning
+        from all epoch. It therefore goes find this matrix for all sparsity values and person. It discriminates between
+        frequency bands and regularization such that in the end 10 vectors are returned, one for each of the five
+        frequency bands, and for each regularization (log and l2). These have a size (1X20). The second dimension is
+        20 as there are 20 sparsity parameters, ranging from 0.05 to 1 with 0.05. The values in the arrays represents
+        the average sparsity for that frequency band for each sparsity parameter averaged over all individuals.
+        increments.
+
+        :param data_path: path of where all the .mat files are saved which are obtained from the MATLAB script.
+        :return: sparsity_all_epochs_alpha_l2,sparsity_all_epochs_alpha_log,sparsity_all_epochs_beta_l2,
+                 sparsity_all_epochs_beta_log, sparsity_all_epochs_delta_l2, sparsity_all_epochs_delta_log,
+                 sparsity_all_epochs_gamma_l2, sparsity_all_epochs_gamma_log,
+                 sparsity_all_epochs_theta_l2, sparsity_all_epochs_theta_log
+    """
     path = os.path.join(data_path, '**/*.mat')
     files = glob.glob(path, recursive=True)
-
     sparsity_all_epochs_alpha_l2 = []
     sparsity_all_epochs_alpha_log = []
-
     sparsity_all_epochs_beta_l2 = []
     sparsity_all_epochs_beta_log = []
-
     sparsity_all_epochs_delta_l2 = []
     sparsity_all_epochs_delta_log = []
-
     sparsity_all_epochs_gamma_l2 = []
     sparsity_all_epochs_gamma_log = []
-
     sparsity_all_epochs_theta_l2 = []
     sparsity_all_epochs_theta_log = []
 
@@ -785,21 +799,37 @@ def get_sparsities_all_epochs(data_path):
 
 
 # function to get all sparsities per epoch per band per regularization
-def compute_sparsities_per_epoch(data_path):
+def compute_sparsities_per_epoch(data_path, number_of_individuals=84):
+    """
+        This functions computes the  average sparsity over all subjects for  each individual epoch.
+        It discriminates between frequency bands and regularization such that in the end 10 vectors are returned, one
+        for each of the five frequency bands, and for each regularization (log and l2). These have a size (20X20).
+        The first dimension (number of rows) is 20 as there is one line per epoch. The second dimension (number of
+        columns) is also 20, this time because there are 20 sparsity parameter (from 0.05 to 1). So in each matrix the
+        element i,j represents the average sparsity for all individuals for sparsity parameter i and epoch j 20 sparsity
+        parameters. There are 10 matrices, for each of thr five frequency bands and for the two regularization.
+
+        :param data_path: path of where all the .mat files are saved which are obtained from the MATLAB script.
+        :param number_of_individuals: the number of individuals in the sample_data. In our case, the data contained
+               the data for 84 people, hence the default value
+        :return: matrix_alpha_l2, matrix_alpha_log, matrix_beta_l2, matrix_beta_log, matrix_delta_l2, matrix_delta_log,
+                 matrix_gamma_l2, matrix_gamma_log, matrix_theta_l2, matrix_theta_log
+    """
     path = os.path.join(data_path, '**/*.mat')
     files = glob.glob(path, recursive=True)
+    third_dimension_size = number_of_individuals*2
 
     # third dimension should be 84*2 on final data but 3 on the test
-    matrix_alpha_l2 = np.zeros((20, 20, 168))
-    matrix_alpha_log = np.zeros((20, 20, 168))
-    matrix_beta_l2 = np.zeros((20, 20, 168))
-    matrix_beta_log = np.zeros((20, 20, 168))
-    matrix_delta_l2 = np.zeros((20, 20, 168))
-    matrix_delta_log = np.zeros((20, 20, 168))
-    matrix_gamma_l2 = np.zeros((20, 20, 168))
-    matrix_gamma_log = np.zeros((20, 20, 168))
-    matrix_theta_l2 = np.zeros((20, 20, 168))
-    matrix_theta_log = np.zeros((20, 20, 168))
+    matrix_alpha_l2 = np.zeros((20, 20, third_dimension_size))
+    matrix_alpha_log = np.zeros((20, 20, third_dimension_size))
+    matrix_beta_l2 = np.zeros((20, 20, third_dimension_size))
+    matrix_beta_log = np.zeros((20, 20, third_dimension_size))
+    matrix_delta_l2 = np.zeros((20, 20, third_dimension_size))
+    matrix_delta_log = np.zeros((20, 20, third_dimension_size))
+    matrix_gamma_l2 = np.zeros((20, 20, third_dimension_size))
+    matrix_gamma_log = np.zeros((20, 20, third_dimension_size))
+    matrix_theta_l2 = np.zeros((20, 20, third_dimension_size))
+    matrix_theta_log = np.zeros((20, 20, third_dimension_size))
 
     count_alpha = 0
     count_beta = 0
@@ -819,14 +849,13 @@ def compute_sparsities_per_epoch(data_path):
         epoch_matrix_theta_l2 = []
         epoch_matrix_theta_log = []
 
-
         session, alphas, betas, id, frequency_band, size_wl2, size_wlog, wl2, wlog = load_mat_file(file)
 
         if frequency_band == 'alpha':
             for alpha in range(len(alphas)):
                 line_of_epochs_l2 = []
                 # here the range is not fixed to size_wl2[3]-1 because not all people have the same
-                # number of epochs --> the min value is 17 so we will stop there
+                # number of epochs --> the min value is 20 so we will stop there
                 for epoch in range(20):
                     matrix = wl2[:, :, alpha, epoch]
                     sparsity = compute_sparsity(matrix)
@@ -999,9 +1028,20 @@ def compute_sparsities_per_epoch(data_path):
 
 
 # function that creates all (10) CSV files for each band and regularization with the sparsity per epoch and parameter
-def save_sparsities_each_epochs(data_path, save_path):
-    matrix_alpha_l2, matrix_alpha_log, matrix_beta_l2, matrix_beta_log, matrix_delta_l2, matrix_delta_log, matrix_gamma_l2, \
-    matrix_gamma_log, matrix_theta_l2, matrix_theta_log = compute_sparsities_per_epoch(data_path)
+def save_sparsities_each_epochs(data_path, save_path, number_of_individuals):
+    """
+    This functions saves the sparsity matrices built in the compute_sparsities_per_epoch. It first calls this function
+    and then creates 10 csv files for each band and regularization using panda dataframes. It adds a firsi row to
+    indicate which epoch this average sparsity is from and an index column to specify the value of the sparsity
+    parameter. There is no return as it simply saves the CSV files.
+
+    :param data_path: path of where all the .mat files are saved which are obtained from the MATLAB script.
+    :param save_path: path were the 10 CSVs will be saved
+    :param number_of_individuals: the number of individuals in the sample_data. In our case, the data contained
+           the data for 84 people, hence the default value
+    """
+    matrix_alpha_l2, matrix_alpha_log, matrix_beta_l2, matrix_beta_log, matrix_delta_l2, matrix_delta_log, \
+    matrix_gamma_l2, matrix_gamma_log, matrix_theta_l2, matrix_theta_log = compute_sparsities_per_epoch(data_path, number_of_individuals)
 
     alpha_band_l2_sparsities_df = pd.DataFrame(data=matrix_alpha_l2, index=['0.05', '0.1', '0.15', '0.20', '0.25', '0.3', '0.35', '0.4', '0.45',
                                                         '0.5', '0.55', '0.6', '0.65', '0.7', '0.75', '0.8', '0.85', '0.9', '0.95', '1'],
