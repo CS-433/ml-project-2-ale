@@ -85,9 +85,9 @@ plots.py                        |
 models.py                       |
 run_Random_Forest.py            |
 run_Random_Forest_all_epochs.py |
-run_SVM.py                      |
-run_SVM_all_epochs.py           |
-run_SVM_without_var.py          |
+run_SVM.py                      |Compute the accuracy of the SVM model per epochs using a chosen regularization and frequency bands. To determine the best                                            parameters of the SVM model a grid search can be performed. An accuracy table is stored in a csv file inside a SVM folder:                                          r“../SVM”. 
+run_SVM_all_epochs.py           |Compute the accuracy of the SVM model using an average of all epochs, a chosen regularization and frequency bands. To determine the                                  best parameters of the SVM model a grid search can be performed. An accuracy table is stored in a csv file inside a SVM folder:                                      r“../SVM”.
+run_SVM_without_var.py          |Compute the accuracy of the SVM model per epochs using a chosen regularization, frequency bands and the best SVM parameters. To                                      determine the best parameters of the SVM model features were removed according to their variance. An accuracy table is stored in a                                  csv file inside a SVM folder: r“../SVM”.
 run_correlations.py             |
 run_correlation_all_epochs.py   |
 run_sparsity.py                 |
