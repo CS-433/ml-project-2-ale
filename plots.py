@@ -302,6 +302,16 @@ def plot_accuracies_all_settings_1band(path_tables, save_path, band, params, sav
 
 # function to make the two plot with all epochs combined
 def plot_sparsities_all_epochs(csv_files_path, save_path, save_fig=False):
+    """
+    Plot the sparsity with respect to the value of the sparsity parameter for every epoch. Each epoch is treated as an
+    individual line in these plots. One plot is made per frequency band and per regularization (10 plots in total)
+
+   :param csv_files_path: where the CSV file are saved, which are created with save_sparsities_each_epochs.
+   :param save_path: path were the plots should be saved
+   :param save_fig: True means the figures will be saved in save_path, whereas with false they will only be shown via
+          plt.show()
+    """
+    y_scale = np.linspace(0.35, 1, 14, endpoint=True)
     path = csv_files_path
     all_files = Path(path).glob('*.csv')
 
@@ -325,11 +335,12 @@ def plot_sparsities_all_epochs(csv_files_path, save_path, save_fig=False):
                 plt.plot(alphas, sparsity_theta, label='theta band')
                 plt.legend()
 
-                plt.title(title + ": plot")
-                plt.xlabel('alpha')
-                plt.ylabel('sparsity')
+                # plt.title(title + ": plot")
+                plt.xlabel('sprasity parameter', fontsize=25)
+                plt.ylabel('sparsity', fontsize=25)
                 plt.xticks(alphas)
-                plt.xticks(rotation=90)
+                plt.xticks(rotation=90, fontsize=15)
+                plt.yticks(y_scale, fontsize=15)
                 plt.grid(True)
                 plt.tight_layout()
 
@@ -355,11 +366,12 @@ def plot_sparsities_all_epochs(csv_files_path, save_path, save_fig=False):
                 plt.plot(betas, sparsity_theta, label='theta band')
                 plt.legend()
 
-                plt.title(title + ": plot")
-                plt.xlabel('beta')
-                plt.ylabel('sparsity')
+                # plt.title(title + ": plot")
+                plt.xlabel('sprasity parameter', fontsize=25)
+                plt.ylabel('sparsity', fontsize=25)
                 plt.xticks(betas)
-                plt.xticks(rotation=90)
+                plt.xticks(rotation=90, fontsize=15)
+                plt.yticks(y_scale, fontsize=15)
                 plt.grid(True)
                 plt.tight_layout()
 
@@ -372,6 +384,17 @@ def plot_sparsities_all_epochs(csv_files_path, save_path, save_fig=False):
 
 
 def plot_sparsities_per_epoch(csv_files_path, save_path, save_fig=False):
+    """
+    Plot the sparsity with respect to the value of the sparsity parameter for the all epochs files.
+    Each frequency band is treated as an individual line in these plots. One plot is made per regularization (2 plots
+    in total)
+
+   :param csv_files_path: where the CSV file are saved, which are created with save_sparsities_all_epochs.
+   :param save_path: path were the plots should be saved
+   :param save_fig: True means the figures will be saved in save_path, whereas with false they will only be shown via
+                    plt.show()
+    """
+    y_scale = np.linspace(0.35, 1, 14, endpoint=True)
     # function to make the 10 plots for each band with all 17 epochs each as a line
     path = csv_files_path
     all_files = Path(path).glob('*.csv')
@@ -382,14 +405,15 @@ def plot_sparsities_per_epoch(csv_files_path, save_path, save_fig=False):
         title = name_of_file[:-4]
         if 'l2' in title:
             alphas = df.iloc[:, 0]
-            for epoch in np.linspace(1,17,17):
+            for epoch in np.linspace(1,19,19):
                 plt.plot(alphas, df.iloc[:, int(epoch)], linewidth=0.1)
 
-            plt.title(title + ": plot")
-            plt.xlabel('alpha')
-            plt.ylabel('sparsity')
+            # plt.title(title + ": plot")
+            plt.xlabel('sparsity parameter', fontsize=25)
+            plt.ylabel('sparsity', fontsize=25)
             plt.xticks(alphas)
-            plt.xticks(rotation=90)
+            plt.xticks(rotation=90, fontsize=15)
+            plt.yticks(y_scale, fontsize=15)
             plt.grid(True)
             plt.tight_layout()
 
@@ -402,14 +426,15 @@ def plot_sparsities_per_epoch(csv_files_path, save_path, save_fig=False):
 
         elif 'log' in title:
             betas = df.iloc[:, 0]
-            for epoch in np.linspace(1, 17, 17):
+            for epoch in np.linspace(1, 19, 19):
                 plt.plot(betas, df.iloc[:, int(epoch)], linewidth=0.1)
 
-            plt.title(title + ": plot")
-            plt.xlabel('beta')
-            plt.ylabel('sparsity')
+            # plt.title(title + ": plot")
+            plt.xlabel('sparsity parameter', fontsize=25)
+            plt.ylabel('sparsity', fontsize=25)
             plt.xticks(betas)
-            plt.xticks(rotation=90)
+            plt.xticks(rotation=90, fontsize=15)
+            plt.yticks(y_scale, fontsize=15)
             plt.grid(True)
             plt.tight_layout()
 
