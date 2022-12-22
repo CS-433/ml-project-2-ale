@@ -29,7 +29,7 @@ Directory layout
     ├── Data_Visualisation.ipynb
     ├── README.md
     ├── create_datasets.py
-    ├── create_accuracy_sets.py
+    ├── create_accuracy_plots.py
     ├── helpers.py
     ├── plots.py
     ├── models.py
