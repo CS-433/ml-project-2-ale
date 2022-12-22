@@ -4,14 +4,11 @@ from helpers import *
 # performs a grid search on different hyper-parameters of the SVM for a defined train set, select the best model
 # and compute the accuracy on the test set
 
-# all the explored sparsity parameters
+# we explore the train/test sets for all sparsity parameters
 sparsity_parameters = [0.05, 0.1, 0.15000000000000002, 0.2, 0.25, 0.3, 0.35000000000000003, 0.4, 0.45,0.5, 0.55, 0.6,
                        0.6499999999999999, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.]
 
-# different thresholds tested to remove the variance
-threshold = np.linspace(8*10**-4, 0.1, 30, endpoint=True)
-
-# Here we define the training and test set that are used to
+# Here we define the training and test set that are used
 # regularization can be either "wlog" or "wl2"
 reg = "wlog"
 # the band is either "alpha", "beta", "delta", "gamma" or "theta"
@@ -40,5 +37,5 @@ print("all predictions done")
 
 # save the accuracy table to a csv file
 name_of_file = 'SVM_accuracy_table_' + reg + '_' + band + '.csv'
-accuracy_table.to_csv(path_or_buf=r'Sample_data/' + name_of_file)
+accuracy_table.to_csv(path_or_buf=r'sample_data/' + name_of_file)
 print("accuracy table successfully saved")

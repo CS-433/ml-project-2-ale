@@ -154,3 +154,40 @@ def RandomForest_tune_predict_evaluate(x_train, y_train, x_test, y_test, save_pa
     plot_confusion_matrix(y_test, pred, accuracy=test_accuracy, save_fig=save_fig, title=title, save_path=save_path)
 
     return test_accuracy, best_n_estimators, best_max_depth, best_min_samples_split, best_min_samples_leaf
+
+
+def validation_SVM(train_setx,train_sety, test_setx,threshold, best_C, best_kernel, best_gamma):
+    """
+    Cross validation to tune the SVM model. It iterates on a number of threshold to remove the features with a variance below it 
+     Args:
+        train_setx: an array returned by the function "load_data_set" which provides the matrix of data for the train set
+        train_sety: an array returned by the function "load_data_set" which provides the matrix of data for the test set
+        test_setx: an array returned by the function "load_data_set" which provides the IDs according to the train set
+        threshold: either a linspace or a numerical value. The variance of the columns belows it will be removed
+        best_C: a numerical value. This is a parameter of SVM. The best ones found by grid search are 1 or 10 
+        best_kernel: a string. This is a parameter of SVM. The best ones found by grid search are "rbf" or "sigmoid" 
+        best_gamma:  a string. This is a parameter of SVM. The best one found by grid search is "scale"
+
+    Returns: return the best threshold which gives the higher accuracy, and its accuracy on the cross validation set 
+"""
+
+    best_threshh=0.0
+    accuracyy=0.0
+    _scoring = ['accuracy']
+    #remove a number of columns according to its variance and compute the accuracy 
+    for ind, T in enumerate(threshold):
+        x_train, x_test = remove_col_lowvariance(pd.DataFrame(train_setx), pd.DataFrame(test_setx), T)
+
+        result = cross_validate(estimator=SVC(C=best_C, gamma=best_gamma, kernel= best_kernel),
+                             X=x_train,
+                             y=train_sety,
+                             cv=5,
+                             scoring=_scoring,
+                             return_train_score=True,
+                             n_jobs=20)
+
+        if result['test_accuracy'].mean()>accuracyy:
+            best_threshh = T
+            accuracyy=result['test_accuracy'].mean()
+        print('Done for threshold: ', threshold)
+    return best_threshh, accuracyy
