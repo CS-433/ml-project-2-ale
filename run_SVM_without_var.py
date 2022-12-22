@@ -1,15 +1,17 @@
 from models import *
 
 
+#the parameters used to control the sparsity of our model
 sparsity_parameters = [0.05, 0.1, 0.15000000000000002, 0.2, 0.25, 0.3, 0.35000000000000003, 0.4, 0.45, 0.5, 0.55, 0.6,
         0.6499999999999999, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.]
 
-
+#a linspace experimentally determined from looking at the data. Can be adapted to each regularisation, log tend to performed better with high sparsity parameter than l2.
 threshold_l2= np.linspace(0.00005,0.01,35, endpoint=True)
 
+#the frequency bands used to load the data. A selection of them can be chosen as: ["alpha", "beta"]
 bands = ["alpha", "beta", "delta", "gamma", "theta"]
 
-
+#determining the regularisation used
 reg = "wl2"
 
 
@@ -25,14 +27,18 @@ for band in bands:
     print("starting predictions for: " + band)
     for j, spar in enumerate(sparsity_parameters):
 
-
+        #Be careful to turn off "epochs_combined" by setting it to False
         x_train, y_train = load_data_set(band, reg, "train", spar, path=r'data_sets/Train_set/',
                                          epochs_combined=False)
         x_test, y_test = load_data_set(band, reg, "test", beta, path=r'data_sets/Test_set/',
                                        epochs_combined=False)
         print("Data loaded")
+        
+        #find the optimal threshold by cross validation
         best_thresh, accuracy_valid = validation_SVM(x_train,y_train, x_test,threshold_l2, 10, 'sigmoid', 'scale')
         print("Validation step done")
+        
+        #remove the columns according to the best threshold find above and compute the accuracy
         x_train, x_test = remove_col_lowvariance(pd.DataFrame(x_train), pd.DataFrame(x_test), best_thresh)
         accuracy, C, gamma, kernel = SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test,
                                                                                    save_path=r'plots/',
@@ -61,10 +67,11 @@ for band in bands:
 
 print("all predictions done")
 
-accuracy_table_al.to_csv(path_or_buf=r'Sample_data/SVM_accuracy_table_all_epochs_alpha.csv')
-accuracy_table_be.to_csv(path_or_buf=r'Sample_data/SVM_accuracy_table_all_epochs_beta.csv')
-accuracy_table_de.to_csv(path_or_buf=r'Sample_data/accuracy_table_all_epochs_delta.csv')
-accuracy_table_ga.to_csv(path_or_buf=r'Sample_data/accuracy_table_all_epochs_gamma.csv')
-accuracy_table_th.to_csv(path_or_buf=r'Sample_data/accuracy_table_all_epochs_theta.csv')
+#be careful to adapt the name of the csv file with the regularisation
+accuracy_table_al.to_csv(path_or_buf=r'Sample_data/SVM_accuracy_table_l2_all_epochs_alpha.csv')
+accuracy_table_be.to_csv(path_or_buf=r'Sample_data/SVM_accuracy_table_l2_all_epochs_beta.csv')
+accuracy_table_de.to_csv(path_or_buf=r'Sample_data/accuracy_table_l2_all_epochs_delta.csv')
+accuracy_table_ga.to_csv(path_or_buf=r'Sample_data/accuracy_table_l2_all_epochs_gamma.csv')
+accuracy_table_th.to_csv(path_or_buf=r'Sample_data/accuracy_table_l2_all_epochs_theta.csv')
 
 print("accuracy table successfully saved")
