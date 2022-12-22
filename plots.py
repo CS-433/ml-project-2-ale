@@ -32,6 +32,12 @@ def plot_confusion_matrix(y_test, y_pred, accuracy, save_path, save_fig=False, t
 
 
 def find_band_labels(filename):
+    """
+    Finds which frequency band is in the filename and returns it as a string
+
+    :param filename: string, name of the file
+    :return: "alpha", "beta", "delta", "gamma" or "theta" depending on which string is present in filename
+    """
     if "alpha" in filename:
         return "alpha"
     elif "beta" in filename:
@@ -45,19 +51,37 @@ def find_band_labels(filename):
 
 
 def find_reg_labels(filename):
+    """
+    Finds which regularization and which model was used to generate by looking at the string present "filename"
+
+    :param filename: string, name of the file
+    :return: string, the name of the model and which regularization was used
+    """
     if "correlations" in filename:
         if "l2" in filename:
-            return "dashed", "correlation l2"
+            return "correlation l2"
         elif "log" in filename:
-            return "dotted", "correlation log"
-    else:
+            return "correlation log"
+    elif "RandomForest" in filename:
         if "l2" in filename:
-            return "solid", "RandomForest l2"
+            return "RandomForest l2"
         elif "log" in filename:
-            return "dashdot", "RandomForest log"
+            return "RandomForest log"
+    elif "SVM" in filename:
+        if "l2" in filename:
+            return "SVM l2"
+        elif "log" in filename:
+            return "SVM log"
 
 
 def find_line_style(filename):
+    """
+    Returns a matplot lib type of line depending on what string are present in filename (i.e. with which model were
+    these results generated)
+
+    :param filename: name of file
+    :return: string, "dashed" if correlations is in filename, "solid" otherwise
+    """
     if "correlations" in filename:
         return "dashed"
     else:
@@ -65,6 +89,13 @@ def find_line_style(filename):
 
 
 def find_line_color(filename):
+    """
+    Returns different colors depending on the string present in filename, to be able to plot bands and regularization
+    in different colors.
+
+    :param filename: string, name of file
+    :return: string, a color name different depending of the band and the regularization present in filename
+    """
     if "alpha" in filename:
         if "l2" in filename:
             return "blue"
@@ -92,12 +123,27 @@ def find_line_color(filename):
             return "mediumorchid"
 
 
-def plot_accuracies_wrt_parameter(path_tables, save_path, model_name, regularization, save_fig=False,
+def plot_accuracies_wrt_parameter(path_tables, save_path, model_name, regularization, params, save_fig=False,
                                   y_scale=np.linspace(0, 1, 21, endpoint=True), all_epochs=False):
+    """
+    Plot the accuracies (with regards to the parameters params) of all the files contained in filename. It will generate
+    one plot with all the bands either from files containing results from single epochs data sets or all epochs combined
+    data sets and for one type of regularization
+
+    :param path_tables: string, directory where the datasets are stored (as .csv)
+    :param save_path: string, directory where the plots will be saved if save_fig = True
+    :param model_name: string, name of the model used to generate the result files, is used in the name of the file when
+    saved
+    :param regularization: string, type of regularization used to generate the results we want to plot
+    :param params: list of double, the values corresponding to the x-axis
+    :param save_fig: bool, whether to save the figure, default = False
+    :param y_scale: list of float, the y-scale to be used in the plot, default = 0 to 1 with 0.05 increments
+    :param all_epochs: bool, whether to plot the results generated from all epochs combined dataset or single epochs
+    generated data sets, default = False
+    """
     path = path_tables
     all_files = Path(path).glob('*.csv')
-    params = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499999999999999, 0.7, 0.75, 0.8,
-              0.85, 0.9, 0.95, 1.]
+
     for file in all_files:
         df = pd.read_csv(file)
         x = df["alpha/beta"]
@@ -109,29 +155,30 @@ def plot_accuracies_wrt_parameter(path_tables, save_path, model_name, regulariza
         if not condition and not all_epochs:
             if regularization in name_of_file:
                 plt.plot(x, y, label=find_band_labels(name_of_file))
-                plt.legend(fontsize=13)
-                plt.ylabel('accuracy', fontsize=25)
-                plt.xlabel('learning graph parameter', fontsize=25)
-                plt.xticks(params, rotation=90, fontsize=15)
-                plt.yticks(y_scale, fontsize=15)
-                plt.grid(True)
-                plt.tight_layout()
         elif condition and all_epochs:
             if regularization in name_of_file:
                 plt.plot(x, y, label=find_band_labels(name_of_file))
-                plt.legend(fontsize=12)
-                plt.ylabel('accuracy', fontsize=25)
-                plt.xlabel('learning graph parameter', fontsize=25)
-                plt.xticks(params, rotation=90, fontsize=15)
-                plt.yticks(y_scale, fontsize=15)
-                plt.grid(True)
-                plt.tight_layout()
+    plt.legend(fontsize=12)
+    plt.ylabel('accuracy', fontsize=25)
+    plt.xlabel('learning graph parameter', fontsize=25)
+    plt.xticks(params, rotation=90, fontsize=15)
+    plt.yticks(y_scale, fontsize=15)
+    plt.grid(True)
+    plt.tight_layout()
     if save_fig:
         plt.savefig(save_path + title + ".png")
     plt.show()
 
 
 def create_df_best_accuracies_all_epochs(params, dataframe):
+    """
+    Creates a data frame with only the best accuracy per parameter in params when we have a file with
+    more than one accuracy for each parameter in params
+
+    :param params: list of float, i.e. list of parameters for which accuracies were computed
+    :param dataframe: panda data frame with multiple accuracies for each parameter in param
+    :return: panda data frame with only the best accuracy per parameter retained
+    """
     new_accuracy_table = pd.DataFrame(columns=['reg', 'band', 'alpha/beta', 'accuracy'])
     bands = ["alpha", "beta", "delta", "gamma", "theta"]
     for band in bands:
@@ -146,12 +193,27 @@ def create_df_best_accuracies_all_epochs(params, dataframe):
     return new_accuracy_table
 
 
-def plot_accuracies_wrt_parameter_from1file(path_tables, save_path, model_name, regularization, save_fig=False,
+def plot_accuracies_wrt_parameter_from1file(path_tables, save_path, model_name, regularization, params, save_fig=False,
                                              y_scale=np.linspace(0, 1, 21, endpoint=True)):
+    """
+    Plot the accuracies (with regards to the parameters params) of the file contained in filename. It will generate
+    one plot with all the bands either from one file containing results from single epochs data sets or all epochs combined
+    data sets and for one type of regularization. In this case, all the accuracies for all the bands are stored in the
+    same file and multiple accuracies are stored for each parameter in params. The function first creates a new data
+    frame containig only one accuracy per parameter (the highest one) and then plots all the data from the .csv file in
+    one plot. Such .csv file are only generated when we use results generated with all epochs combined data sets.
+
+    :param path_tables: string, directory where the datasets are stored (as .csv)
+    :param save_path: string, directory where the plots will be saved if save_fig = True
+    :param model_name: string, name of the model used to generate the result files, is used in the name of the file when
+    saved
+    :param regularization: string, type of regularization used to generate the results we want to plot
+    :param params: list of double, the values corresponding to the x-axis
+    :param save_fig: bool, whether to save the figure, default = False
+    :param y_scale: list of float, the y-scale to be used in the plot, default = 0 to 1 with 0.05 increments
+    """
     path = path_tables
     all_files = Path(path).glob('*.csv')
-    params = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499999999999999, 0.7, 0.75, 0.8,
-              0.85, 0.9, 0.95, 1.]
 
     for file in all_files:
         df = pd.read_csv(file)
@@ -194,12 +256,26 @@ def plot_accuracies_wrt_parameter_from1file(path_tables, save_path, model_name, 
                 plt.show()
 
 
-def plot_accuracies_all_settings_1band(path_tables, save_path, band, save_fig=False,
+def plot_accuracies_all_settings_1band(path_tables, save_path, band, params, save_fig=False,
                                        y_scale=np.linspace(0, 1, 21, endpoint=True)):
+    """
+    Plot the accuracies from different models on the y-axis and params on the x-axis for a single frequency band.
+    All the accuracies data are stored in .csv files in the directory given by path_tables. The correlation models are
+    plotted with dashed lines and the ML models with solid lines.
+
+    :param path_tables: string, directory where the datasets are stored (as .csv)
+    :param save_path: string, directory where the plots will be saved if save_fig = True
+    :param band: string, the frequency band used to generate the result files we want to plot
+    :param model_name: string, name of the model used to generate the result files, is used in the name of the file when
+    saved
+    :param regularization: string, type of regularization used to generate the results we want to plot
+    :param params: list of double, the values corresponding to the x-axis
+    :param save_fig: bool, whether to save the figure, default = False
+    :param y_scale: list of float, the y-scale to be used in the plot, default = 0 to 1 with 0.05 increments
+    """
     path = os.path.join(path_tables, '**/*.csv')
     all_files = glob.glob(path, recursive=True)
-    params = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499999999999999, 0.7, 0.75, 0.8,
-              0.85, 0.9, 0.95, 1.]
+
     for file in all_files:
         name_of_file = os.path.basename(os.path.normpath(file))
         name_of_file = name_of_file[:-4]
@@ -209,7 +285,7 @@ def plot_accuracies_all_settings_1band(path_tables, save_path, band, save_fig=Fa
             df = pd.read_csv(file)
             x = df["alpha/beta"]
             y = df["accuracy"]
-            linestyle, label = find_reg_labels(name_of_file)
+            label = find_reg_labels(name_of_file)
             plt.plot(x, y, label=label, linestyle=find_line_style(name_of_file), color=find_line_color(name_of_file))
             plt.legend(fontsize=12)
             plt.ylabel('accuracy', fontsize=25)
@@ -222,6 +298,7 @@ def plot_accuracies_all_settings_1band(path_tables, save_path, band, save_fig=Fa
     if save_fig:
         plt.savefig(save_path + title + ".png")
     plt.show()
+
 
 # function to make the two plot with all epochs combined
 def plot_sparsities_all_epochs(csv_files_path, save_path, save_fig=False):
