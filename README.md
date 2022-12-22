@@ -18,7 +18,9 @@ Directory layout
     
     ├── data_sets
             ├────── Test_set
-            └─────── Train_set    
+                          └────── test_wl2_alpha_0.1.txt
+            └─────── Train_set 
+                          └────── test_wl2_alpha_0.1.txt
     ├── plots
             ├────── SVM_l2_all_epochs_accuracies.png
             └─────── SVM_log_all_epochs__accuracies.png 
