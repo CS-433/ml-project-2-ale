@@ -1,11 +1,13 @@
 from models import *
 
+#run a cross validation on thresholds to defined the best number of features to keep to obtain the higher accuracy with SVM model.
 
 #the parameters used to control the sparsity of our model
 sparsity_parameters = [0.05, 0.1, 0.15000000000000002, 0.2, 0.25, 0.3, 0.35000000000000003, 0.4, 0.45, 0.5, 0.55, 0.6,
         0.6499999999999999, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.]
 
 #a linspace experimentally determined from looking at the data. Can be adapted to each regularisation, log tend to performed better with high sparsity parameter than l2.
+#will be used to delete features
 threshold_l2= np.linspace(0.00005,0.01,35, endpoint=True)
 
 #the frequency bands used to load the data. A selection of them can be chosen as: ["alpha", "beta"]
