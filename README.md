@@ -84,14 +84,14 @@ create_accuracy_plots.py	    | This file creates different plots of the best acc
 helpers.py                      | Set of useful functions used throughout the project
 plots.py                        |
 models.py                       |
-run_Random_Forest.py            |
-run_Random_Forest_all_epochs.py |
+run_Random_Forest.py            |Compute the accuracy of the Random Forest model per epochs using a chosen regularization and frequency bands. To determine the best                                  parameters of the Random Forest model a grid search can be performed. An accuracy table is stored in a csv file inside a Random                                      Forest folder: r'../results/RandomForest'
+run_Random_Forest_all_epochs.py |Compute the accuracy of the Random Forest model using an average of all epochs and a chosen regularization and frequency bands. To                                  determine the best parameters of the Random Forest model a grid search can be performed. An accuracy table is stored in a csv file                                  inside a Random Forest folder: r'../results/RandomForest'
 run_SVM.py                      |Compute the accuracy of the SVM model per epochs using a chosen regularization and frequency bands. To determine the best                                            parameters of the SVM model a grid search can be performed. An accuracy table is stored in a csv file inside a SVM folder:                                          r“../SVM”. 
 run_SVM_all_epochs.py           |Compute the accuracy of the SVM model using an average of all epochs, a chosen regularization and frequency bands. To determine the                                  best parameters of the SVM model a grid search can be performed. An accuracy table is stored in a csv file inside a SVM folder:                                      r“../SVM”.
 run_SVM_without_var.py          |Compute the accuracy of the SVM model per epochs using a chosen regularization, frequency bands and the best SVM parameters. To                                      determine the best parameters of the SVM model features were removed according to their variance. An accuracy table is stored in a                                  csv file inside a SVM folder: r“../SVM”.
 run_correlations.py             |
 run_correlation_all_epochs.py   |
-run_sparsity.py                 |
+run_sparsity.py                 |Use to assess the sparsity of our data per epoch or on an average of them. The sparsity depending on the sparsity parameters,                                        regularisation and frequency band. The results are stored in csv files inside the folders r'../results/sparsity_csv/all_epochs/'                                    and r'../results/sparsity_csv/per_epoch/' according to the choices. The sparsity is plotted in the folder r'plots/’
 
 Authors
 =======
