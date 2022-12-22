@@ -1,12 +1,11 @@
 from helpers import *
 from plots import *
 
-# change paths
-path_of_data = r'../../Data3/Hamid_ML4Science_ALE/MATLAB/learned_graphs'
-save_path_of_CSV_per_epoch = r'../../Data3/Hamid_ML4Science_ALE/sparsity_csv/all_epochs/'
-save_path_of_CSV_all_epoch = r'../../Data3/Hamid_ML4Science_ALE/sparsity_csv/per_epoch/'
+path_of_data = r'Sample_data'
+save_path_of_CSV_per_epoch = r'../results/sparsity_csv/all_epochs/'
+save_path_of_CSV_all_epoch = r'../results/sparsity_csv/per_epoch/'
 
-save_path_of_sparsity_plots = r'../../Data3/Hamid_ML4Science_ALE/sparsity/plots/'
+save_path_of_sparsity_plots = r'plots/'
 
 print("finding lowest number of epochs")
 path = os.path.join(path_of_data, '**/*.mat')
