@@ -11,6 +11,7 @@ reg = "wlog"
 #the frequency bands used to load the data. A selection of them can be chosen as: ["alpha", "beta"]
 band = "beta"
 
+#create a dataframe to store our accuracies
 accuracy_table = pd.DataFrame(columns=['reg', 'band', 'alpha/beta', 'n estimators', 'max depth', 'min samples split',
                                        'min samples leaf', 'accuracy'])
 
