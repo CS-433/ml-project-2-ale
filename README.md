@@ -42,7 +42,8 @@ Directory layout
     ├── run_correlation_all_epochs.py
     ├── run_sparsity.py
     ├── scr_learn_graph_LEA_allsubjs.m    
-    └── Report.pdf
+    └── ML_Project2_BrainFingerPrinting.pdf
+
      
 
 
@@ -63,12 +64,12 @@ sample_data         		    | Since the raw data use to build our data set is to h
 Non Python files:
 -----------
 
-filename                        | description
---------------------------------|------------------------------------------
-README.md                       | Text file (markdown format) describing all the files of the project and its architecure
-Data_Visualisation.ipynb        | Jupyter Notebook containing the visualization of the data and its exploration. The reasoning of pre processing can be found inside
-scr_learn_graph_LEA_allsubjs.m  | Mathlab file returning the adjacency matrix in function of parameters, see report for a complete explanation. The folder “utils”                                     gives it tools needed to compile.  
-Report.pdf                      | Pdf file explaining our project in detail. Every information about the models chosen and the results can be found inside 
+filename                            | description
+------------------------------------|------------------------------------------
+README.md                           | Text file (markdown format) describing all the files of the project and its architecure
+Data_Visualisation.ipynb            | Jupyter Notebook containing the visualization of the data and its exploration. The reasoning of pre processing can be found inside
+scr_learn_graph_LEA_allsubjs.m      | Mathlab file returning the adjacency matrix in function of parameters, see report for a complete explanation. The folder “utils”                                     gives it tools needed to compile.  
+ML_Project2_BrainFingerPrinting.pdf | Pdf file explaining our project in detail. Every information about the models chosen and the results can be found inside 
 
 
 
@@ -79,14 +80,14 @@ Python files:
 
 filename                        | description
 --------------------------------|------------------------------------------
-create_datasets.py              |Create all the data sets from the matrix returned by the mathlab learn graph script “scr_learn_graph_LEA_allsubjs.m” and stored                                      inside the folder ”Sample_data”. There is the possibility to create the dataset for all epochs combined or per epoch. These txt                                      files are stored inside the folder: ‘data¬_set’
-create_accuracy_plots.py	    | This file creates different plots of the best accuracy of our models with regards to each of the learned graph sparsity                                             parameters. To run it without modifying the paths the .csv results files need to be stored in the folders at the following path                                     starting from this repository: SVM results: ../SVM, RandomForest results: ../results/RandomForest, correlation results:                                             ../results/correlations 
+create_datasets.py              |Create all the data sets from the matrix returned by the mathlab learn graph script “scr_learn_graph_LEA_allsubjs.m” and stored inside the folder Sample_data/. There is the possibility to create the dataset for all epochs combined or per epoch. These txt files are stored inside the folder: data_set
+create_accuracy_plots.py	    | This file creates different plots of the best accuracy of our models with regards to each of the learned graph sparsity parameters. To run it without modifying the paths the .csv results files need to be stored in the folders at the following path starting from this repository: SVM results: ../SVM, RandomForest results: ../results/RandomForest, correlation results:                                             ../results/correlations 
 helpers.py                      | Set of useful functions used throughout the project
-plots.py                        |A file containing all the functions needed to plot the results we wanted to show. For example, the code to plot the confusion                                        matrix or to plot accuracies of different models can be found here. The plots are saved in the folder r'plots/’ 
+plots.py                        |A file containing all the functions needed to plot the results we wanted to show. For example, the code to plot the confusion matrix or to plot accuracies of different models can be found here. The plots are saved in the folder plots/ 
 models.py                       |
-run_Random_Forest.py            |Compute the accuracy of the Random Forest model per epochs using a chosen regularization and frequency bands. To determine the best                                  parameters of the Random Forest model a grid search can be performed. An accuracy table is stored in a csv file inside a Random                                      Forest folder: r'../results/RandomForest'
-run_Random_Forest_all_epochs.py |Compute the accuracy of the Random Forest model using a combination of all epochs and a chosen regularization and frequency bands. To                               determine the best parameters of the Random Forest model a grid search can be performed. An accuracy table is stored in a csv file                                  inside a Random Forest folder: r'../results/RandomForest'
-run_SVM.py                      |Compute the accuracy of the SVM model per epochs using a chosen regularization and frequency bands. To determine the best                                            parameters of the SVM model a grid search can be performed. An accuracy table is stored in a csv file inside a SVM folder:                                          r“../SVM” 
+run_Random_Forest.py            |Compute the accuracy of the Random Forest model per epochs using a chosen regularization and frequency bands. To determine the best parameters of the Random Forest model a grid search can be performed. An accuracy table is stored in a csv file inside a Random                                      Forest folder: r'../results/RandomForest'
+run_Random_Forest_all_epochs.py |Compute the accuracy of the Random Forest model using a combination of all epochs and a chosen regularization and frequency bands. To determine the best parameters of the Random Forest model a grid search can be performed. An accuracy table is stored in a csv file                                  inside a Random Forest folder: r'../results/RandomForest'
+run_SVM.py                      |Compute the accuracy of the SVM model per epochs using a chosen regularization and frequency bands. To determine the best parameters of the SVM model a grid search can be performed. An accuracy table is stored in a csv file inside a SVM folder:                                          r“../SVM” 
 run_SVM_all_epochs.py           |Compute the accuracy of the SVM model using a combination of all epochs, a chosen regularization and frequency bands. To determine the                              best parameters of the SVM model a grid search can be performed. An accuracy table is stored in a csv file inside a SVM folder:                                      r“../SVM”
 run_SVM_without_var.py          |Compute the accuracy of the SVM model per epochs using a chosen regularization, frequency bands and the best SVM parameters. To                                      determine the best parameters of the SVM model features were removed according to their variance. An accuracy table is stored in a                                  csv file inside a SVM folder: r“../SVM”
 run_correlations.py             | Computes the accuracy of predictions by computing the inter-subjects correlations between the train and test sets build using                                       single epochs separately. The train and test sets used are all from the same band and the same regularization that is specified at                                   the begining of the file but all for different sparsity parameters. The results are saved in a .csv file containing all the                                         correlation accuracies for each sparsity parameters at the path ../results/correlations/, starting from this directory
