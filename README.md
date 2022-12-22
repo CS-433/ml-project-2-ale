@@ -61,10 +61,10 @@ Non Python files:
 
 filename                        | description
 --------------------------------|------------------------------------------
-README.md                       | Text file (markdown format) describing all the files of the project
-Data_Visualisation.ipynb        | 
-scr_learn_graph_LEA_allsubjs.m  |
-Report.pdf                      |
+README.md                       | Text file (markdown format) describing all the files of the project and its architecure
+Data_Visualisation.ipynb        | Jupyter Notebook containing the visualization of the data and its exploration. The reasoning of pre processing can be found inside
+scr_learn_graph_LEA_allsubjs.m  | Mathlab file returning the adjacency matrix in function of parameters, see report for a complete explanation. The folder “utils”                                     gives it tools needed to compile.  
+Report.pdf                      | Pdf file explaining our project in detail. Every information about the models chosen and the results can be found inside 
 
 
 
