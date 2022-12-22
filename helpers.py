@@ -153,7 +153,7 @@ def create_final_data_set(data_set_alpha, data_set_beta, data_set_delta, data_se
 
 
 def create_all_sets(data_path, save_file=True, verbose=True, last_epoch=False,
-                    saving_path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/'):
+                    saving_path='/data_sets/'):
     """
     Creates training and test sets from a directory containing the brain graphs learned from MEG data. It creates one
     list per frequency band (alpha, beta, delta, gamma, theta) per regularization (l2 or log) per type (test/train) so
@@ -169,7 +169,7 @@ def create_all_sets(data_path, save_file=True, verbose=True, last_epoch=False,
     :param last_epoch: bool, whether to created datasets using only the graph learned using all epochs combined (True)
     or the graphs learned using all epochs separately (False). Default is false.
     :param saving_path: string, where to save the files, the directory must contain 1 subdirectory named "train" and one
-    named "test".Default is the path we saved the file on the lab server.
+    named "test".
     :return: 20 lists of 20 elements containing the train/test sets needed for creating our ML models
     """
 
