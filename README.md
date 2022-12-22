@@ -15,15 +15,34 @@ Directory layout
 ================
 
     Directory                           # Main directory
-    ├── cross_validation.py
-    ├── helpers.py
-    ├── implementations.py
-    ├── model_selection.py
+    
+    ├── data_sets
+            ├────── Test_set
+            └─────── Train_set    
     ├── plots
-    ├── plots.py
+            ├────── SVM_l2_all_epochs_accuracies.png
+            └─────── SVM_log_all_epochs__accuracies.png 
+    ├── utils
+            ├────── HCP_info
+                          └────── MEG84_subjects_ID.mat
+            └────── gspbox                                  
+    ├── Data_Visualisation.ipynb
     ├── README.md
-    ├── run.py
-    └── Project2.pdf
+    ├── create_datasets.py
+    ├── helpers.py
+    ├── plots.py
+    ├── models.py
+    ├── run_Random_Forest.py
+    ├── run_Random_Forest_all_epochs.py
+    ├── run_SVM.py
+    ├── run_SVM_all_epochs.py
+    ├── run_SVM_without_var.py
+    ├── run_correlations.py
+    ├── run_correlation_all_epochs.py
+    ├── run_sparsity.py
+    ├── scr_learn_graph_LEA_allsubjs.m    
+    └── Report.pdf
+     
 
 
 
@@ -43,6 +62,12 @@ Non Python files:
 filename                        | description
 --------------------------------|------------------------------------------
 README.md                       | Text file (markdown format) describing all the files of the project
+Data_Visualisation.ipynb        | 
+scr_learn_graph_LEA_allsubjs.m  |
+Report.pdf                      |
+
+
+
 
 
 Python files:
@@ -50,12 +75,18 @@ Python files:
 
 filename                        | description
 --------------------------------|------------------------------------------
-cross_validation.py             |Set of functions that perform the k_fold-cross validation of the different prediction models from implementations.py
+create_datasets.py              |
 helpers.py                      |Set of useful functions used throughout the project
-implementations.py              |Data preprocessing function as well as our model prediction functions. These include Least Squares, Ridge Regression, Gradient                                      Descend, Stochastic Gradient Descend, Polynomial Regression, Logistic Regression and Regularized Logistic Regression
-model_selection.py              |File containing the resulting MSE computed by different hyperparameters.
-plots.py                        |Functions used to plot some of our results
-run.py                          |File that runs a our best model and creates the submission file for AICrowd
+plots.py                        |
+models.py                       |
+run_Random_Forest.py            |
+run_Random_Forest_all_epochs.py |
+run_SVM.py                      |
+run_SVM_all_epochs.py           |
+run_SVM_without_var.py          |
+run_correlations.py             |
+run_correlation_all_epochs.py   |
+run_sparsity.py                 |
 
 Authors
 =======
