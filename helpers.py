@@ -431,7 +431,7 @@ def fix_outliers_std(datafr):
 
 
 def load_data_set(band, regularization, type, parameter, epochs_combined=False,
-                  path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/'):
+                  path=r'/data_sets/'):
     """
         Loads the data sets created by create_sets with certain parameters and returns it.
 
@@ -448,7 +448,7 @@ def load_data_set(band, regularization, type, parameter, epochs_combined=False,
                          beta if log is chosen. 20 possible value
             - epochs_combined: bool, whether we want the data set from the brain graphs learned using all epochs
                                combined (True) or the ones using all epochs separately (False), False by default
-            - path: string where the test and train files are, default value is the path on the servers
+            - path: string where the test and train files are
 
         Returns:
             - the file corresponding to those parameters
@@ -527,7 +527,7 @@ def predict_with_correlation(band, reg, param, epochs_combined, path):
     return y_pred, y_test
 
 
-def compute_benchmark(band, reg, params, epochs_combined=False, path=r'../../Data3/Hamid_ML4Science_ALE/data_sets/',
+def compute_benchmark(band, reg, params, epochs_combined=False, path=r'/data_sets/',
                       verbose=True):
     """
     Computes the accuracy of a specific band and regularization and with a prediction made with correlations
@@ -540,7 +540,7 @@ def compute_benchmark(band, reg, params, epochs_combined=False, path=r'../../Dat
     predictions and measure accuracy
     :param epochs_combined: bool, whether we want the dataset to be the one derived from the graphs learned using all
     epochs combined (True) or not (False), default is False
-    :param path: string, where the test and train files are, by default the path on the servers
+    :param path: string, where the test and train files are
     :param verbose: bool, whether to display information as the function runs. True by default.
     :return: a dataframe with: regularization, band, hyperparameter and accuracy computed for each setting
     """
