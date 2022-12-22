@@ -1,5 +1,4 @@
 import pandas as pd
-# from sklearn.preprocessing import StandardScaler
 import glob
 import os
 import numpy as np
@@ -336,42 +335,19 @@ def readfile(filename, size_of_matrix=148):
     return upper_triangular_matrix
 
 
-'''
-def preprocessing(data):
-
-    df = pd.DataFrame(data)
-    #mean=df.mean(axis=1)
-    median = df.median(axis=1)
-    #change Nan value to the mean value of the column
-    #df.fillna(median)
-    #remove outliers: remplace by median values or +/- 3x the standard deviation of the feature
-    #df.std(ddof=0) divide by N instead of N-1
-    df[df > 3 * df.std() ] = 3 * df.std()
-    df[df < 3 * df.std()] = 3 * df.std()
-
-    #find low variance from visualisation, remove? df.drop([index],axis=1)
-
-    #standardize # define standard scaler
-    scaler = StandardScaler()
-    # transform data -> return an array of the standardize values
-    data = scaler.fit_transform(df)
-
-    return data
-    
-'''
-
-
 def remove_col_lowvariance(datafrx, datafr_test, threshold):
     """
+    It removes the columns with a lower value than the given threshold. This operation is done on the test and train set to be able to predict later.
     Args:
-        datafr: a pandas DataFrame
-        threshold: variance under this threshold will be removed
+        datafr: a pandas DataFrame containing the train data
+        datafr_test: a pandas DataFrame containing the test data
+        threshold: a numerical value that sets the variance threshold below which the columns with lower variance will be removed  
 
-    Returns: a DataFrame without the columns with variance bellow the threshold
+    Returns: a DataFrame without the columns with variance below the threshold
 
     """
     variance = datafrx.var()
-
+    
     dico = dict(list(enumerate(variance)))
 
     selected_col = [key for key, value in dico.items()
@@ -384,14 +360,13 @@ def remove_col_lowvariance(datafrx, datafr_test, threshold):
 
 def fix_outliers_median(datafr):
     """
-    Remove the outliers by fixing their values to the median value of its column
+    Remove the outliers by fixing its value to the median value of its column.
     Args:
-        datafr: DataFrame
+        datafr: a pandas DataFrame containing the train data
 
-    Returns: Dataframe with its outliers changed
+    Returns: Dataframe with its outliers changed by the median value
 
     """
-
     median = datafr.median()
     std = datafr.std()
     value = datafr
@@ -408,11 +383,11 @@ def fix_outliers_median(datafr):
 
 def fix_outliers_std(datafr):
     """
-    Remove the outliers by fixing their values to +/- 3 * standardization
+    Remove the outliers by fixing its values to +/- 3 * standard deviation of its column
     Args:
-        datafr: DataFrame
+        datafr: a pandas DataFrame containing the train data
 
-    Returns: Dataframe with its outliers changed
+    Returns: a pandas Dataframe with its outliers changed by +/- 3 * standard deviation of its column
 
     """
 
