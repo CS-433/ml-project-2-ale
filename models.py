@@ -9,10 +9,6 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
 import pandas as pd
 
-# need to visualize the data -> if sparse no normalizing but scaling
-# check outliers
-# maybe normalize instead of standardize
-
 
 def SVM_predict(x_train, y_train, x_test, C=1, gamma='scale', kernel='rbf'):
     """
@@ -29,8 +25,6 @@ def SVM_predict(x_train, y_train, x_test, C=1, gamma='scale', kernel='rbf'):
             - train_accuracy: the training accuracy of our model
 
     """
-    # TODO: check if other pre-processing is needed
-    # TODO: maybe other param to tune
     # define the model (standardization and then SVM) and fit it
     model = make_pipeline(StandardScaler(), SVC(kernel=kernel, C=C, gamma=gamma))
     model.fit(x_train, y_train)
@@ -49,6 +43,8 @@ def SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test, save_path='', C_
                               default_gamma='scale', default_kernel='rbf'):
     """
        Performs a grid search + 5-folds CV over all the given parameter to find the best SVM model for our training set
+       Or alternatively, when grid search = False, uses the default_C, default_gamma, default_kernel as the hyper-parameters
+       for the next step (fitting the model)
        Fits this best model to our training set and use it to predict the labels of our test set
        Evaluates the accuracy of the model and plots the resulting confusion matrix
        Args:
@@ -63,9 +59,18 @@ def SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test, save_path='', C_
                             by default gamma_params = [10, 1, 0.1, 0.01, 0.001, 0.0001]
            - kernel_params: list of kernel hyperparameters used in the grid search of the SVM model
                             by default kernel_params = ['rbf', 'poly', 'sigmoid']
-           - save_fig: whether to save the generated figure with the confusion matrix, False by default
+           - save_fig: bool, whether to save the generated figure with the confusion matrix, False by default
            - title: title of the generated figure and name as which it will be saved if save_fig=True
                     by default title = "confusion_matrix"
+           - grid_search: bool, whether a grid search is performed to find the best hyper parameters on the train set (True)
+           or to simply use the default_C, default_gamma, default_kernel hyperparameters when fitting the SVM model,
+           by default = True
+           - default_C: float, C hyperparameter of SVM to use when fitting the model in the case grid_search = False,
+           default = 1
+           - default_gamma: float or string, gamma hyperparameter of SVM to use when fitting the model in the case
+           grid_search = False, default = 'scale'
+           - default_kernel: string, kernel hyperparameter of SVM to use when fitting the model in the case
+           grid_search = False, default = 'rbf'
        Returns:
            - test_accuracy: the test accuracy of the best SVM model
            - best_C, best_gamma, best_kernel: the SVM hyperparameters used in our SVM model (selected with 5-fold CV)
@@ -97,9 +102,23 @@ def SVM_tune_predict_evaluate(x_train, y_train, x_test, y_test, save_path='', C_
     return test_accuracy, best_C, best_gamma, best_kernel
 
 
-def RandomForest_predict(x_train, y_train, x_test, n_estimators=100, max_depth=None,
-                         min_samples_split=2, min_samples_leaf=1,
-                         n_jobs=5):
+def RandomForest_predict(x_train, y_train, x_test, n_estimators=100, max_depth=None, min_samples_split=2,
+                         min_samples_leaf=1, n_jobs=5):
+    """
+    Pre-process the data, fit a Random Forest model on the training set and predicts the labels associated to the test set
+
+    :param x_train: numpy array of size (N_train,D), training set
+    :param y_train: numpy array of size (D), labels corresponding to the training set
+    :param x_test: numpy array of size (N_test, D), test set
+    :param n_estimators: float, n_estimators hyper-parameter of the Random Forest model, by default = 100
+    :param max_depth: float, max_depth hyper-parameter of the Random Forest model, by default = None, i.e. no depth restriction
+    :param min_samples_split: int, min_samples_split hyper-parameter of the Random Forest model, by default = 2
+    :param min_samples_leaf: int, min_samples_leaf hyper-parameter of the Random Forest model, by default = 1
+    :param n_jobs: int, the number of jobs to run in parallel during the fitting of the model, default = 5
+    :return: - y_pred_test: the labels predicted by the Random Forest model for our test set
+            - train_accuracy: the training accuracy of the model
+    """
+
     model = make_pipeline(StandardScaler(), RandomForestClassifier(n_estimators=n_estimators,
                                                                    max_depth=max_depth, min_samples_split=min_samples_split,
                                                                    min_samples_leaf=min_samples_leaf,
@@ -117,17 +136,58 @@ def RandomForest_predict(x_train, y_train, x_test, n_estimators=100, max_depth=N
 def RandomForest_tune_predict_evaluate(x_train, y_train, x_test, y_test, save_path='', n_estimators_params=[100, 500, 1000],
                                        max_depth_params=[50, 100, 1000, None],
                                        min_samples_split_params=[2, 5, 10], min_samples_leaf_params=[1, 2, 4],
-                                       n_jobs=5, save_fig=False,
+                                       n_jobs=20, save_fig=False,
                                        title="confusion_matrix", grid_search=True, default_n_estimators=100,
                                        default_max_depth=None, default_min_samples_split=2,
                                        default_min_samples_leaf=1):
+    """
+    Performs a grid search + 5-folds CV over all the given hyper-parameter to find the best Random Forest model for our training set
+    Or alternatively, when grid search = False, uses the default_n_estimators, default_max_depth, default_min_samples_split
+    and default_min_samples_leaf as the hyper-parameters for the next step (fitting the model)
+    Fits this best model (found with grid search or using default parameters) to our training set and use it to predict
+    the labels of our test set
+    Evaluates the accuracy of the model and plots the resulting confusion matrix
 
-    # TODO: is there more parameters to include in the grid search ???
+    :param x_train: numpy array of size (N_train,D), training set
+    :param y_train: numpy array of size (D), labels corresponding to the training set
+    :param x_test: numpy array of size (N_test, D), test set
+    :param y_test: numpy array of size (D), labels corresponding to the test set
+    :param save_path: path to which the confusion matrix will be saved, default = directory where the script is run
+    :param n_estimators_params: list of n_estimators hyperparameters used in the grid search of the Random Forest model
+    by default = [100, 500, 1000]
+    :param max_depth_params: list of max_depth hyperparameters used in the grid search of the Random Forest model
+    by default = [50, 100, 1000, None]
+    :param min_samples_split_params: list of min_samples_split hyperparameters used in the grid search of the Random
+    Forest model by default = [2, 5, 10]
+    :param min_samples_leaf_params: list of min_samples_leaf hyperparameters used in the grid search of the Random
+    Forest model by default = [1, 2, 4]
+    :param n_jobs: int, number of jobs to run in parallel during the grid search and the fitting of the model, default = 20
+    :param save_fig: bool, whether to save the generated figure with the confusion matrix, False by default
+    :param title: title of the generated confusion matrix and name as which it will be saved if save_fig=True
+    by default title = "confusion_matrix"
+    :param grid_search: bool, whether a grid search is performed to find the best hyper parameters on the train set (True)
+    or to simply use the default_n_estimators, default_max_depth, default_min_samples_split, default_min_samples_leaf
+    as the hyperparameters when fitting the Random Forest model, by default = True
+    :param default_n_estimators: float, n_estimator hyperparameter of Random Forest to use when fitting the model in
+    the case grid_search = False, default = 100
+    :param default_max_depth: float, max_depth hyperparameter of Random Forest to use when fitting the model in
+    the case grid_search = False, default = None
+    :param default_min_samples_split: float, min_samples_split hyperparameter of Random Forest to use when fitting the
+    model in the case grid_search = False, default = 2
+    :param default_min_samples_leaf: float, min_samples_leaf hyperparameter of Random Forest to use when fitting the model in
+    the case grid_search = False, default = 1
+    :return: - test_accuracy: the test accuracy of the Random Forest model
+             - best_n_estimators, best_max_depth, best_min_samples_split, best_min_samples_leaf: hyper-parameters used
+             to fit the model either selected by the grid search on the test set or using default parameters passed as
+             arguments
+    """
+
     if grid_search:
         # grid search
         params = {'n_estimators': n_estimators_params, 'max_depth': max_depth_params,
                   'min_samples_split': min_samples_split_params, 'min_samples_leaf': min_samples_leaf_params}
-        grid_search = GridSearchCV(estimator=RandomForestClassifier(random_state=1), param_grid=params, cv=3, n_jobs=20, verbose=1)
+        grid_search = GridSearchCV(estimator=RandomForestClassifier(random_state=1), param_grid=params, cv=3,
+                                   n_jobs=n_jobs, verbose=1)
         grid_search.fit(x_train, y_train)
         best_n_estimators = grid_search.best_params_["n_estimators"]
         best_max_depth = grid_search.best_params_["max_depth"]
@@ -174,7 +234,7 @@ def validation_SVM(train_setx,train_sety, test_setx,threshold, best_C, best_kern
     best_threshh=0.0
     accuracyy=0.0
     _scoring = ['accuracy']
-    #remove a number of columns according to its variance and compute the accuracy 
+    # remove a number of columns according to its variance and compute the accuracy
     for ind, T in enumerate(threshold):
         x_train, x_test = remove_col_lowvariance(pd.DataFrame(train_setx), pd.DataFrame(test_setx), T)
 
